@@ -14,14 +14,10 @@
       padding: 10px;
     }
 
-    h2 {
-      text-align: center;
-    }
-
-    .form-container {
+    .form {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
+      gap: 8px;
       max-width: 900px;
       margin: auto;
     }
@@ -32,23 +28,23 @@
     }
 
     button {
-      padding: 12px;
       margin-top: 15px;
       width: 100%;
+      padding: 12px;
       background: black;
       color: white;
       border: none;
-      font-size: 16px;
     }
 
-    /* INVOICE */
+    /* A4 INVOICE */
     .invoice-box {
-      width: 100%;
-      max-width: 800px;
-      margin: auto;
+      width: 794px;
+      height: 1123px;
+      padding: 20px;
       border: 2px solid #000;
-      padding: 15px;
+      margin: auto;
       background: white;
+      box-sizing: border-box;
     }
 
     .header {
@@ -58,7 +54,6 @@
     .header h1 {
       color: red;
       margin: 0;
-      font-size: 28px;
     }
 
     .header h3 {
@@ -67,34 +62,28 @@
     }
 
     .contact {
-      font-size: 14px;
       margin-top: 10px;
+      font-size: 14px;
     }
 
-    .invoice-title {
+    .title {
       text-align: center;
       font-weight: bold;
       margin: 10px 0;
     }
 
     .top-box {
-      border: 1px solid #000;
       display: flex;
-      flex-wrap: wrap;
+      border: 1px solid black;
     }
 
     .top-left, .top-right {
-      width: 100%;
+      width: 50%;
       padding: 10px;
     }
 
-    @media(min-width:600px){
-      .top-left, .top-right {
-        width: 50%;
-      }
-      .top-left {
-        border-right: 1px solid #000;
-      }
+    .top-left {
+      border-right: 1px solid black;
     }
 
     table {
@@ -104,7 +93,7 @@
     }
 
     th, td {
-      border: 1px solid #000;
+      border: 1px solid black;
       padding: 8px;
     }
 
@@ -112,55 +101,50 @@
       text-align: center;
     }
 
-    .rate-col, .amount-col {
+    .center {
       text-align: center;
       font-weight: bold;
     }
 
     .total-section {
       display: flex;
-      border: 1px solid #000;
+      border: 1px solid black;
       border-top: none;
-      flex-wrap: wrap;
     }
 
-    .words, .total-box {
-      width: 100%;
+    .words {
+      width: 65%;
       padding: 10px;
+      border-right: 1px solid black;
     }
 
-    @media(min-width:600px){
-      .words {
-        width: 65%;
-        border-right: 1px solid #000;
-      }
-      .total-box {
-        width: 35%;
-        text-align: center;
-      }
+    .total-box {
+      width: 35%;
+      text-align: center;
+      padding: 10px;
+      font-weight: bold;
+      font-size: 18px;
     }
 
     .signature {
       text-align: right;
-      margin-top: 40px;
+      margin-top: 60px;
     }
 
     #invoice {
       display: none;
     }
-
   </style>
 </head>
 
 <body>
 
-<h2>Asad Travels Billing</h2>
+<h2 align="center">Asad Travels Billing</h2>
 
-<div class="form-container">
+<div class="form">
 
 <input id="to" placeholder="To">
 <input id="date" type="date">
-
 <input id="bookedBy" placeholder="Booked By">
 <input id="project" placeholder="Project">
 
@@ -170,22 +154,14 @@
 
 <input id="days" placeholder="Days">
 <input id="km" placeholder="KM">
-<input id="driver" placeholder="Driver Allowance">
+<input id="rate" placeholder="Rate per KM">
 
+<input id="driver" placeholder="Driver per Day">
 <input id="from" type="date">
 <input id="toDate" type="date">
 
 <input id="toll" placeholder="Toll">
 <input id="advance" placeholder="Advance">
-
-<input id="rate1" placeholder="Rate 1 (e.g. 389x18)">
-<input id="amount1" placeholder="Amount 1">
-
-<input id="rate2" placeholder="Rate 2">
-<input id="amount2" placeholder="Amount 2">
-
-<input id="rate3" placeholder="Rate 3">
-<input id="amount3" placeholder="Amount 3">
 
 </div>
 
@@ -205,7 +181,7 @@ Email: asif@gmail.com <br>
 Mob: __________
 </div>
 
-<div class="invoice-title">INVOICE</div>
+<div class="title">INVOICE</div>
 
 <div class="top-box">
 <div class="top-left">
@@ -214,7 +190,7 @@ TO: <span id="t_to"></span>
 
 <div class="top-right">
 Invoice No: <span id="t_invoice"></span><br>
-Invoice Date: <span id="t_date"></span><br>
+Date: <span id="t_date"></span><br>
 Booked By: <span id="t_bookedBy"></span><br>
 Project: <span id="t_project"></span>
 </div>
@@ -244,16 +220,14 @@ Toll: <span id="t_toll"></span><br>
 Advance: <span id="t_advance"></span>
 </td>
 
-<td class="rate-col">
-<span id="t_rate1"></span><br><br>
-<span id="t_rate2"></span><br><br>
-<span id="t_rate3"></span>
+<td class="center">
+<span id="t_rate"></span><br><br>
+Driver x Days
 </td>
 
-<td class="amount-col">
-<span id="t_amount1"></span><br><br>
-<span id="t_amount2"></span><br><br>
-<span id="t_amount3"></span>
+<td class="center">
+<span id="t_kmAmount"></span><br><br>
+<span id="t_driverAmount"></span>
 </td>
 </tr>
 </table>
@@ -279,17 +253,15 @@ Signature
 
 <script>
 
-function numberToWords(num) {
-  let a = ["","one","two","three","four","five","six","seven","eight","nine","ten",
-  "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen",
-  "eighteen","nineteen"];
-  let b = ["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
+function numberToWords(num){
+if(num<20) return ["","one","two","three","four","five","six","seven","eight","nine","ten",
+"eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"][num];
 
-  if(num < 20) return a[num];
-  if(num < 100) return b[Math.floor(num/10)] + " " + a[num%10];
-  if(num < 1000) return a[Math.floor(num/100)] + " hundred " + numberToWords(num%100);
+if(num<100) return ["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"][Math.floor(num/10)]+" "+numberToWords(num%10);
 
-  return num;
+if(num<1000) return numberToWords(Math.floor(num/100))+" hundred "+numberToWords(num%100);
+
+return num;
 }
 
 function generatePDF(){
@@ -306,39 +278,40 @@ t_project.innerText = project.value;
 t_hire.innerText = hire.value;
 t_carType.innerText = carType.value;
 t_carNo.innerText = carNo.value;
+
 t_days.innerText = days.value;
 t_km.innerText = km.value;
 t_driver.innerText = driver.value;
+
 t_from.innerText = from.value;
 t_toDate.innerText = toDate.value;
+
 t_toll.innerText = toll.value;
 t_advance.innerText = advance.value;
 
-t_rate1.innerText = rate1.value;
-t_rate2.innerText = rate2.value;
-t_rate3.innerText = rate3.value;
+// CALCULATIONS
+let kmAmount = (km.value || 0) * (rate.value || 0);
+let driverAmount = (driver.value || 0) * (days.value || 0);
 
-t_amount1.innerText = amount1.value;
-t_amount2.innerText = amount2.value;
-t_amount3.innerText = amount3.value;
+let total = kmAmount + driverAmount + (parseFloat(toll.value)||0) - (parseFloat(advance.value)||0);
 
-let total =
-(parseFloat(amount1.value)||0)+
-(parseFloat(amount2.value)||0)+
-(parseFloat(amount3.value)||0);
+t_rate.innerText = rate.value + " x " + km.value;
+t_kmAmount.innerText = kmAmount;
+t_driverAmount.innerText = driverAmount;
 
 t_total.innerText = total;
-
 t_words.innerText = numberToWords(total);
 
+// PDF
 invoice.style.display="block";
 
-html2canvas(invoice).then(canvas=>{
+html2canvas(invoice, {scale:2}).then(canvas=>{
 const img = canvas.toDataURL("image/png");
-const { jsPDF } = window.jspdf;
-const pdf = new jsPDF();
 
-pdf.addImage(img,'PNG',10,10,190,0);
+const { jsPDF } = window.jspdf;
+const pdf = new jsPDF("p","pt","a4");
+
+pdf.addImage(img,'PNG',0,0,595,842);
 pdf.save("invoice.pdf");
 
 invoice.style.display="none";
