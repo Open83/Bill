@@ -2,7 +2,6 @@
 <html>
 <head>
   <title>Asad Travels Billing</title>
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -11,15 +10,21 @@
   <style>
     body {
       font-family: Arial;
-      padding: 10px;
+      margin: 0;
+      padding: 15px;
+      background: #f5f5f5;
+    }
+
+    h2 {
+      text-align: center;
     }
 
     .form {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
-      gap: 8px;
       max-width: 900px;
       margin: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
     }
 
     input {
@@ -29,22 +34,24 @@
 
     button {
       margin-top: 15px;
-      width: 100%;
       padding: 12px;
-      background: black;
-      color: white;
+      width: 100%;
+      background: #000;
+      color: #fff;
       border: none;
+      font-size: 16px;
+      cursor: pointer;
     }
 
-    /* A4 INVOICE */
+    /* PERFECT A4 */
     .invoice-box {
       width: 794px;
       height: 1123px;
-      padding: 20px;
-      border: 2px solid #000;
+      background: #fff;
+      padding: 25px;
       margin: auto;
-      background: white;
       box-sizing: border-box;
+      border: 2px solid #000;
     }
 
     .header {
@@ -54,27 +61,30 @@
     .header h1 {
       color: red;
       margin: 0;
+      font-size: 32px;
     }
 
     .header h3 {
       margin: 5px 0;
       text-decoration: underline;
+      font-weight: normal;
     }
 
     .contact {
-      margin-top: 10px;
       font-size: 14px;
+      margin-top: 10px;
     }
 
     .title {
       text-align: center;
       font-weight: bold;
       margin: 10px 0;
+      font-size: 18px;
     }
 
     .top-box {
       display: flex;
-      border: 1px solid black;
+      border: 1px solid #000;
     }
 
     .top-left, .top-right {
@@ -83,7 +93,7 @@
     }
 
     .top-left {
-      border-right: 1px solid black;
+      border-right: 1px solid #000;
     }
 
     table {
@@ -93,12 +103,14 @@
     }
 
     th, td {
-      border: 1px solid black;
-      padding: 8px;
+      border: 1px solid #000;
+      padding: 10px;
+      vertical-align: top;
     }
 
     th {
       text-align: center;
+      background: #f2f2f2;
     }
 
     .center {
@@ -108,27 +120,27 @@
 
     .total-section {
       display: flex;
-      border: 1px solid black;
+      border: 1px solid #000;
       border-top: none;
     }
 
     .words {
       width: 65%;
-      padding: 10px;
-      border-right: 1px solid black;
+      padding: 12px;
+      border-right: 1px solid #000;
     }
 
     .total-box {
       width: 35%;
       text-align: center;
-      padding: 10px;
-      font-weight: bold;
+      padding: 12px;
       font-size: 18px;
+      font-weight: bold;
     }
 
     .signature {
       text-align: right;
-      margin-top: 60px;
+      margin-top: 70px;
     }
 
     #invoice {
@@ -139,10 +151,9 @@
 
 <body>
 
-<h2 align="center">Asad Travels Billing</h2>
+<h2>Asad Travels Billing</h2>
 
 <div class="form">
-
 <input id="to" placeholder="To">
 <input id="date" type="date">
 <input id="bookedBy" placeholder="Booked By">
@@ -162,7 +173,6 @@
 
 <input id="toll" placeholder="Toll">
 <input id="advance" placeholder="Advance">
-
 </div>
 
 <button onclick="generatePDF()">Download PDF</button>
@@ -199,7 +209,7 @@ Project: <span id="t_project"></span>
 <table>
 <tr>
 <th>Description</th>
-<th>Rate</th>
+<th>Details</th>
 <th>Amount</th>
 </tr>
 
@@ -207,27 +217,21 @@ Project: <span id="t_project"></span>
 <td>
 Hire Charges Of: <span id="t_hire"></span><br>
 Car Type: <span id="t_carType"></span><br>
-Car No: <span id="t_carNo"></span><br><br>
-
-Days: <span id="t_days"></span><br>
-KM: <span id="t_km"></span><br>
-Driver: <span id="t_driver"></span><br><br>
-
-From: <span id="t_from"></span><br>
-To: <span id="t_toDate"></span><br><br>
-
-Toll: <span id="t_toll"></span><br>
-Advance: <span id="t_advance"></span>
+Car No: <span id="t_carNo"></span>
 </td>
 
 <td class="center">
-<span id="t_rate"></span><br><br>
-Driver x Days
+KM × Rate<br>
+Driver × Days<br>
+Toll<br>
+Advance
 </td>
 
 <td class="center">
-<span id="t_kmAmount"></span><br><br>
-<span id="t_driverAmount"></span>
+<span id="t_kmAmount"></span><br>
+<span id="t_driverAmount"></span><br>
+<span id="t_toll"></span><br>
+- <span id="t_advance"></span>
 </td>
 </tr>
 </table>
@@ -253,20 +257,27 @@ Signature
 
 <script>
 
-function numberToWords(num){
-if(num<20) return ["","one","two","three","four","five","six","seven","eight","nine","ten",
-"eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"][num];
+// FULL NUMBER TO WORDS (INDIAN STYLE)
+function numberToWords(num) {
+  const a = ["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten",
+  "Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+  const b = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
 
-if(num<100) return ["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"][Math.floor(num/10)]+" "+numberToWords(num%10);
+  function inWords(n) {
+    if (n < 20) return a[n];
+    if (n < 100) return b[Math.floor(n/10)] + " " + a[n%10];
+    if (n < 1000) return a[Math.floor(n/100)] + " Hundred " + inWords(n%100);
+    if (n < 100000) return inWords(Math.floor(n/1000)) + " Thousand " + inWords(n%1000);
+    if (n < 10000000) return inWords(Math.floor(n/100000)) + " Lakh " + inWords(n%100000);
+    return "";
+  }
 
-if(num<1000) return numberToWords(Math.floor(num/100))+" hundred "+numberToWords(num%100);
-
-return num;
+  return inWords(num) + " Rupees Only";
 }
 
 function generatePDF(){
 
-let invoiceNo = "INV" + Date.now();
+let invoiceNo = "INV" + new Date().getTime();
 
 t_invoice.innerText = invoiceNo;
 
@@ -279,42 +290,33 @@ t_hire.innerText = hire.value;
 t_carType.innerText = carType.value;
 t_carNo.innerText = carNo.value;
 
-t_days.innerText = days.value;
-t_km.innerText = km.value;
-t_driver.innerText = driver.value;
+let kmAmount = (Number(km.value) || 0) * (Number(rate.value) || 0);
+let driverAmount = (Number(driver.value) || 0) * (Number(days.value) || 0);
+let tollVal = Number(toll.value) || 0;
+let advanceVal = Number(advance.value) || 0;
 
-t_from.innerText = from.value;
-t_toDate.innerText = toDate.value;
+let total = kmAmount + driverAmount + tollVal - advanceVal;
 
-t_toll.innerText = toll.value;
-t_advance.innerText = advance.value;
-
-// CALCULATIONS
-let kmAmount = (km.value || 0) * (rate.value || 0);
-let driverAmount = (driver.value || 0) * (days.value || 0);
-
-let total = kmAmount + driverAmount + (parseFloat(toll.value)||0) - (parseFloat(advance.value)||0);
-
-t_rate.innerText = rate.value + " x " + km.value;
 t_kmAmount.innerText = kmAmount;
 t_driverAmount.innerText = driverAmount;
+t_toll.innerText = tollVal;
+t_advance.innerText = advanceVal;
 
 t_total.innerText = total;
 t_words.innerText = numberToWords(total);
 
-// PDF
-invoice.style.display="block";
+invoice.style.display = "block";
 
-html2canvas(invoice, {scale:2}).then(canvas=>{
-const img = canvas.toDataURL("image/png");
+html2canvas(invoice, {scale: 3}).then(canvas => {
+  const img = canvas.toDataURL("image/png");
 
-const { jsPDF } = window.jspdf;
-const pdf = new jsPDF("p","pt","a4");
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF("p", "mm", "a4");
 
-pdf.addImage(img,'PNG',0,0,595,842);
-pdf.save("invoice.pdf");
+  pdf.addImage(img, "PNG", 0, 0, 210, 297);
+  pdf.save("invoice.pdf");
 
-invoice.style.display="none";
+  invoice.style.display = "none";
 });
 
 }
