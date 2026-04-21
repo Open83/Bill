@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Asad Travels Billing</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      padding: 10px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    .form-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    input {
+      padding: 8px;
+      width: 100%;
+    }
+
+    button {
+      padding: 12px;
+      margin-top: 15px;
+      width: 100%;
+      background: black;
+      color: white;
+      border: none;
+      font-size: 16px;
+    }
+
+    /* INVOICE */
+    .invoice-box {
+      width: 100%;
+      max-width: 800px;
+      margin: auto;
+      border: 2px solid #000;
+      padding: 15px;
+      background: white;
+    }
+
+    .header {
+      text-align: center;
+    }
+
+    .header h1 {
+      color: red;
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .header h3 {
+      margin: 5px 0;
+      text-decoration: underline;
+    }
+
+    .contact {
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .invoice-title {
+      text-align: center;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .top-box {
+      border: 1px solid #000;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .top-left, .top-right {
+      width: 100%;
+      padding: 10px;
+    }
+
+    @media(min-width:600px){
+      .top-left, .top-right {
+        width: 50%;
+      }
+      .top-left {
+        border-right: 1px solid #000;
+      }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #000;
+      padding: 8px;
+    }
+
+    th {
+      text-align: center;
+    }
+
+    .rate-col, .amount-col {
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .total-section {
+      display: flex;
+      border: 1px solid #000;
+      border-top: none;
+      flex-wrap: wrap;
+    }
+
+    .words, .total-box {
+      width: 100%;
+      padding: 10px;
+    }
+
+    @media(min-width:600px){
+      .words {
+        width: 65%;
+        border-right: 1px solid #000;
+      }
+      .total-box {
+        width: 35%;
+        text-align: center;
+      }
+    }
+
+    .signature {
+      text-align: right;
+      margin-top: 40px;
+    }
+
+    #invoice {
+      display: none;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<h2>Asad Travels Billing</h2>
+
+<div class="form-container">
+
+<input id="to" placeholder="To">
+<input id="date" type="date">
+
+<input id="bookedBy" placeholder="Booked By">
+<input id="project" placeholder="Project">
+
+<input id="hire" placeholder="Hire Charges Of">
+<input id="carType" placeholder="Car Type">
+<input id="carNo" placeholder="Car No">
+
+<input id="days" placeholder="Days">
+<input id="km" placeholder="KM">
+<input id="driver" placeholder="Driver Allowance">
+
+<input id="from" type="date">
+<input id="toDate" type="date">
+
+<input id="toll" placeholder="Toll">
+<input id="advance" placeholder="Advance">
+
+<input id="rate1" placeholder="Rate 1 (e.g. 389x18)">
+<input id="amount1" placeholder="Amount 1">
+
+<input id="rate2" placeholder="Rate 2">
+<input id="amount2" placeholder="Amount 2">
+
+<input id="rate3" placeholder="Rate 3">
+<input id="amount3" placeholder="Amount 3">
+
+</div>
+
+<button onclick="generatePDF()">Download PDF</button>
+
+<!-- INVOICE -->
+<div id="invoice">
+<div class="invoice-box">
+
+<div class="header">
+<h1>ASAD TRAVELS</h1>
+<h3>CAR RENTAL SOLUTION</h3>
+</div>
+
+<div class="contact">
+Email: asif@gmail.com <br>
+Mob: __________
+</div>
+
+<div class="invoice-title">INVOICE</div>
+
+<div class="top-box">
+<div class="top-left">
+TO: <span id="t_to"></span>
+</div>
+
+<div class="top-right">
+Invoice No: <span id="t_invoice"></span><br>
+Invoice Date: <span id="t_date"></span><br>
+Booked By: <span id="t_bookedBy"></span><br>
+Project: <span id="t_project"></span>
+</div>
+</div>
+
+<table>
+<tr>
+<th>Description</th>
+<th>Rate</th>
+<th>Amount</th>
+</tr>
+
+<tr>
+<td>
+Hire Charges Of: <span id="t_hire"></span><br>
+Car Type: <span id="t_carType"></span><br>
+Car No: <span id="t_carNo"></span><br><br>
+
+Days: <span id="t_days"></span><br>
+KM: <span id="t_km"></span><br>
+Driver: <span id="t_driver"></span><br><br>
+
+From: <span id="t_from"></span><br>
+To: <span id="t_toDate"></span><br><br>
+
+Toll: <span id="t_toll"></span><br>
+Advance: <span id="t_advance"></span>
+</td>
+
+<td class="rate-col">
+<span id="t_rate1"></span><br><br>
+<span id="t_rate2"></span><br><br>
+<span id="t_rate3"></span>
+</td>
+
+<td class="amount-col">
+<span id="t_amount1"></span><br><br>
+<span id="t_amount2"></span><br><br>
+<span id="t_amount3"></span>
+</td>
+</tr>
+</table>
+
+<div class="total-section">
+<div class="words">
+Amount in Words: <span id="t_words"></span>
+</div>
+
+<div class="total-box">
+GRAND TOTAL <br>
+₹ <span id="t_total"></span>
+</div>
+</div>
+
+<div class="signature">
+FOR ASAD TRAVELS <br><br>
+Signature
+</div>
+
+</div>
+</div>
+
+<script>
+
+function numberToWords(num) {
+  let a = ["","one","two","three","four","five","six","seven","eight","nine","ten",
+  "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen",
+  "eighteen","nineteen"];
+  let b = ["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
+
+  if(num < 20) return a[num];
+  if(num < 100) return b[Math.floor(num/10)] + " " + a[num%10];
+  if(num < 1000) return a[Math.floor(num/100)] + " hundred " + numberToWords(num%100);
+
+  return num;
+}
+
+function generatePDF(){
+
+let invoiceNo = "INV" + Date.now();
+
+t_invoice.innerText = invoiceNo;
+
+t_to.innerText = to.value;
+t_date.innerText = date.value;
+t_bookedBy.innerText = bookedBy.value;
+t_project.innerText = project.value;
+
+t_hire.innerText = hire.value;
+t_carType.innerText = carType.value;
+t_carNo.innerText = carNo.value;
+t_days.innerText = days.value;
+t_km.innerText = km.value;
+t_driver.innerText = driver.value;
+t_from.innerText = from.value;
+t_toDate.innerText = toDate.value;
+t_toll.innerText = toll.value;
+t_advance.innerText = advance.value;
+
+t_rate1.innerText = rate1.value;
+t_rate2.innerText = rate2.value;
+t_rate3.innerText = rate3.value;
+
+t_amount1.innerText = amount1.value;
+t_amount2.innerText = amount2.value;
+t_amount3.innerText = amount3.value;
+
+let total =
+(parseFloat(amount1.value)||0)+
+(parseFloat(amount2.value)||0)+
+(parseFloat(amount3.value)||0);
+
+t_total.innerText = total;
+
+t_words.innerText = numberToWords(total);
+
+invoice.style.display="block";
+
+html2canvas(invoice).then(canvas=>{
+const img = canvas.toDataURL("image/png");
+const { jsPDF } = window.jspdf;
+const pdf = new jsPDF();
+
+pdf.addImage(img,'PNG',10,10,190,0);
+pdf.save("invoice.pdf");
+
+invoice.style.display="none";
+});
+
+}
+
+</script>
+
+</body>
+</html>
