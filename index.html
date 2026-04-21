@@ -1,326 +1,484 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Asad Travels Billing</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: Arial;
-      margin: 0;
-      padding: 15px;
-      background: #f5f5f5;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #eef2f7;
+      padding: 20px;
+      min-height: 100vh;
     }
 
-    h2 {
+    /* ─── FORM PANEL ─── */
+    .panel {
+      max-width: 860px;
+      margin: 0 auto 30px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 28px 28px 22px;
+    }
+
+    .panel-title {
       text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: #cc0000;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
     }
 
-    .form {
-      max-width: 900px;
-      margin: auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 10px;
+    .panel-sub {
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 22px;
     }
 
-    input {
-      padding: 8px;
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #888;
+      letter-spacing: 0.8px;
+      margin: 18px 0 8px;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 4px;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+    .field { display: flex; flex-direction: column; gap: 4px; }
+
+    .field label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .field input {
+      padding: 9px 11px;
+      border: 1.5px solid #dde1e8;
+      border-radius: 7px;
+      font-size: 14px;
+      color: #222;
+      background: #fafbfd;
+      transition: border 0.2s;
       width: 100%;
     }
 
-    button {
-      margin-top: 15px;
-      padding: 12px;
+    .field input:focus {
+      outline: none;
+      border-color: #cc0000;
+      background: #fff;
+    }
+
+    .btn-download {
+      margin-top: 22px;
       width: 100%;
-      background: #000;
+      padding: 14px;
+      background: #cc0000;
       color: #fff;
       border: none;
+      border-radius: 8px;
       font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
       cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
     }
 
-    /* PERFECT A4 */
+    .btn-download:hover { background: #aa0000; }
+    .btn-download:active { transform: scale(0.99); }
+
+    /* ─── INVOICE (hidden, used for PDF capture) ─── */
+    #invoice-wrapper {
+      position: fixed;
+      left: -9999px;
+      top: 0;
+    }
+
+    /* Exact A4 at 96dpi = 794 × 1123px */
     .invoice-box {
       width: 794px;
       height: 1123px;
       background: #fff;
-      padding: 25px;
-      margin: auto;
+      padding: 30px 35px 25px;
       box-sizing: border-box;
-      border: 2px solid #000;
+      font-family: Arial, sans-serif;
+      position: relative;
+      overflow: hidden;
     }
 
-    .header {
-      text-align: center;
+    /* ─── INVOICE HEADER ─── */
+    .inv-header { text-align: center; margin-bottom: 8px; }
+    .inv-header h1 { color: #cc0000; font-size: 34px; letter-spacing: 2px; margin-bottom: 2px; }
+    .inv-header h3 { font-weight: normal; font-size: 15px; text-decoration: underline; color: #333; }
+
+    .inv-contact {
+      font-size: 13px;
+      color: #444;
+      margin: 8px 0 10px;
+      line-height: 1.6;
     }
 
-    .header h1 {
-      color: red;
-      margin: 0;
-      font-size: 32px;
-    }
-
-    .header h3 {
-      margin: 5px 0;
-      text-decoration: underline;
-      font-weight: normal;
-    }
-
-    .contact {
-      font-size: 14px;
-      margin-top: 10px;
-    }
-
-    .title {
+    .inv-title {
       text-align: center;
       font-weight: bold;
+      font-size: 17px;
+      letter-spacing: 3px;
       margin: 10px 0;
-      font-size: 18px;
+      border-top: 2px solid #000;
+      border-bottom: 2px solid #000;
+      padding: 5px 0;
     }
 
+    /* ─── TOP BOX ─── */
     .top-box {
       display: flex;
-      border: 1px solid #000;
+      border: 1.5px solid #000;
     }
 
     .top-left, .top-right {
-      width: 50%;
-      padding: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      line-height: 1.8;
     }
 
-    .top-left {
-      border-right: 1px solid #000;
-    }
+    .top-left { width: 50%; border-right: 1.5px solid #000; }
+    .top-right { width: 50%; }
 
-    table {
+    .top-left strong, .top-right strong { font-size: 13px; }
+
+    /* ─── MAIN TABLE ─── */
+    .inv-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      margin-top: 0;
+      border-left: 1.5px solid #000;
+      border-right: 1.5px solid #000;
+      border-bottom: 1.5px solid #000;
     }
 
-    th, td {
-      border: 1px solid #000;
-      padding: 10px;
+    .inv-table th {
+      background: #f0f0f0;
+      border: 1.5px solid #000;
+      padding: 9px 12px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .inv-table td {
+      border: 1.5px solid #000;
+      padding: 12px 14px;
+      font-size: 13px;
       vertical-align: top;
     }
 
-    th {
-      text-align: center;
-      background: #f2f2f2;
-    }
+    .td-desc { line-height: 1.8; }
+    .td-details { text-align: center; line-height: 2.2; font-weight: 600; }
+    .td-amount { text-align: center; line-height: 2.2; font-weight: 600; }
 
-    .center {
-      text-align: center;
-      font-weight: bold;
-    }
-
+    /* ─── TOTAL SECTION ─── */
     .total-section {
       display: flex;
-      border: 1px solid #000;
+      border: 1.5px solid #000;
       border-top: none;
     }
 
-    .words {
-      width: 65%;
-      padding: 12px;
-      border-right: 1px solid #000;
+    .words-box {
+      width: 63%;
+      padding: 12px 14px;
+      border-right: 1.5px solid #000;
+      font-size: 13px;
+      font-style: italic;
     }
 
-    .total-box {
-      width: 35%;
+    .grand-total {
+      width: 37%;
       text-align: center;
-      padding: 12px;
-      font-size: 18px;
+      padding: 12px 10px;
+      font-size: 20px;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    /* ─── DATE RANGE ROW ─── */
+    .date-row {
+      font-size: 13px;
+      margin: 8px 0 4px;
+      color: #333;
+    }
+
+    /* ─── SIGNATURE ─── */
+    .inv-signature {
+      text-align: right;
+      margin-top: 50px;
+      font-size: 13px;
       font-weight: bold;
     }
 
-    .signature {
-      text-align: right;
-      margin-top: 70px;
+    /* ─── MOBILE RESPONSIVE ─── */
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+      .panel { padding: 18px 14px; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
+      .panel-title { font-size: 18px; }
     }
 
-    #invoice {
-      display: none;
+    @media (max-width: 420px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
     }
   </style>
 </head>
-
 <body>
 
-<h2>Asad Travels Billing</h2>
+<div class="panel">
+  <div class="panel-title">🚗 ASAD TRAVELS</div>
+  <div class="panel-sub">Invoice Generator — Fill the form and download PDF</div>
 
-<div class="form">
-<input id="to" placeholder="To">
-<input id="date" type="date">
-<input id="bookedBy" placeholder="Booked By">
-<input id="project" placeholder="Project">
+  <div class="section-label">Client Details</div>
+  <div class="grid-3">
+    <div class="field"><label>To (Client)</label><input id="to" placeholder="e.g. ABC Company"></div>
+    <div class="field"><label>Invoice Date</label><input id="date" type="date"></div>
+    <div class="field"><label>Booked By</label><input id="bookedBy" placeholder="e.g. Rahul"></div>
+  </div>
+  <div class="grid-2">
+    <div class="field"><label>Project</label><input id="project" placeholder="Project name"></div>
+    <div class="field"><label>Email (optional)</label><input id="email" placeholder="e.g. asif@gmail.com"></div>
+  </div>
 
-<input id="hire" placeholder="Hire Charges Of">
-<input id="carType" placeholder="Car Type">
-<input id="carNo" placeholder="Car No">
+  <div class="section-label">Vehicle Details</div>
+  <div class="grid-3">
+    <div class="field"><label>Hire Charges Of</label><input id="hire" placeholder="e.g. Mumbai–Pune"></div>
+    <div class="field"><label>Car Type</label><input id="carType" placeholder="e.g. Innova"></div>
+    <div class="field"><label>Car Number</label><input id="carNo" placeholder="e.g. MH01 AB 1234"></div>
+  </div>
 
-<input id="days" placeholder="Days">
-<input id="km" placeholder="KM">
-<input id="rate" placeholder="Rate per KM">
+  <div class="section-label">Trip Charges</div>
+  <div class="grid-4">
+    <div class="field"><label>Total KM</label><input id="km" type="number" placeholder="e.g. 459" min="0"></div>
+    <div class="field"><label>Rate per KM (₹)</label><input id="rate" type="number" placeholder="e.g. 10" min="0"></div>
+    <div class="field"><label>Driver/Day (₹)</label><input id="driver" type="number" placeholder="e.g. 200" min="0"></div>
+    <div class="field"><label>No. of Days</label><input id="days" type="number" placeholder="e.g. 2" min="0"></div>
+  </div>
+  <div class="grid-3">
+    <div class="field"><label>Trip From Date</label><input id="fromDate" type="date"></div>
+    <div class="field"><label>Trip To Date</label><input id="toDate" type="date"></div>
+    <div class="field"><label>Toll Charges (₹)</label><input id="toll" type="number" placeholder="e.g. 250" min="0"></div>
+  </div>
+  <div class="grid-2">
+    <div class="field"><label>Advance Paid (₹)</label><input id="advance" type="number" placeholder="e.g. 300" min="0"></div>
+    <div class="field"><label>Mobile No</label><input id="mobile" placeholder="e.g. 9876543210"></div>
+  </div>
 
-<input id="driver" placeholder="Driver per Day">
-<input id="from" type="date">
-<input id="toDate" type="date">
-
-<input id="toll" placeholder="Toll">
-<input id="advance" placeholder="Advance">
+  <button class="btn-download" onclick="generatePDF()">⬇ Download Invoice PDF</button>
 </div>
 
-<button onclick="generatePDF()">Download PDF</button>
+<!-- Hidden invoice for PDF capture only -->
+<div id="invoice-wrapper">
+  <div class="invoice-box" id="invoice">
 
-<!-- INVOICE -->
-<div id="invoice">
-<div class="invoice-box">
+    <div class="inv-header">
+      <h1>ASAD TRAVELS</h1>
+      <h3>CAR RENTAL SOLUTION</h3>
+    </div>
 
-<div class="header">
-<h1>ASAD TRAVELS</h1>
-<h3>CAR RENTAL SOLUTION</h3>
-</div>
+    <div class="inv-contact">
+      Email: <span id="t_email"></span> &nbsp;|&nbsp; Mob: <span id="t_mobile"></span>
+    </div>
 
-<div class="contact">
-Email: asif@gmail.com <br>
-Mob: __________
-</div>
+    <div class="inv-title">INVOICE</div>
 
-<div class="title">INVOICE</div>
+    <div class="top-box">
+      <div class="top-left">
+        <strong>TO:</strong> <span id="t_to"></span>
+      </div>
+      <div class="top-right">
+        <strong>Invoice No:</strong> <span id="t_invoice"></span><br>
+        <strong>Date:</strong> <span id="t_date"></span><br>
+        <strong>Booked By:</strong> <span id="t_bookedBy"></span><br>
+        <strong>Project:</strong> <span id="t_project"></span>
+      </div>
+    </div>
 
-<div class="top-box">
-<div class="top-left">
-TO: <span id="t_to"></span>
-</div>
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th style="width:38%">Description</th>
+          <th style="width:37%">Details</th>
+          <th style="width:25%">Amount (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-desc">
+            <strong>Hire Charges Of:</strong> <span id="t_hire"></span><br>
+            <strong>Car Type:</strong> <span id="t_carType"></span><br>
+            <strong>Car No:</strong> <span id="t_carNo"></span><br>
+            <span id="t_dateRange" class="date-row"></span>
+          </td>
+          <td class="td-details">
+            <span id="t_kmLine"></span><br>
+            <span id="t_driverLine"></span><br>
+            Toll Charges<br>
+            Less: Advance
+          </td>
+          <td class="td-amount">
+            <span id="t_kmAmount"></span><br>
+            <span id="t_driverAmount"></span><br>
+            <span id="t_toll"></span><br>
+            - <span id="t_advance"></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
-<div class="top-right">
-Invoice No: <span id="t_invoice"></span><br>
-Date: <span id="t_date"></span><br>
-Booked By: <span id="t_bookedBy"></span><br>
-Project: <span id="t_project"></span>
-</div>
-</div>
+    <div class="total-section">
+      <div class="words-box">
+        <strong>Amount in Words:</strong><br>
+        <span id="t_words"></span>
+      </div>
+      <div class="grand-total">
+        GRAND TOTAL<br>
+        ₹ <span id="t_total"></span>
+      </div>
+    </div>
 
-<table>
-<tr>
-<th>Description</th>
-<th>Details</th>
-<th>Amount</th>
-</tr>
+    <div class="inv-signature">
+      FOR ASAD TRAVELS<br><br><br>
+      ___________________<br>
+      Authorised Signature
+    </div>
 
-<tr>
-<td>
-Hire Charges Of: <span id="t_hire"></span><br>
-Car Type: <span id="t_carType"></span><br>
-Car No: <span id="t_carNo"></span>
-</td>
-
-<td class="center">
-KM × Rate<br>
-Driver × Days<br>
-Toll<br>
-Advance
-</td>
-
-<td class="center">
-<span id="t_kmAmount"></span><br>
-<span id="t_driverAmount"></span><br>
-<span id="t_toll"></span><br>
-- <span id="t_advance"></span>
-</td>
-</tr>
-</table>
-
-<div class="total-section">
-<div class="words">
-Amount in Words: <span id="t_words"></span>
-</div>
-
-<div class="total-box">
-GRAND TOTAL <br>
-₹ <span id="t_total"></span>
-</div>
-</div>
-
-<div class="signature">
-FOR ASAD TRAVELS <br><br>
-Signature
-</div>
-
-</div>
+  </div>
 </div>
 
 <script>
+  // Set today's date by default
+  document.getElementById('date').valueAsDate = new Date();
 
-// FULL NUMBER TO WORDS (INDIAN STYLE)
-function numberToWords(num) {
-  const a = ["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten",
-  "Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
-  const b = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+  // Number to words – Indian style with proper spacing
+  function numberToWords(num) {
+    if (num === 0) return "Zero Rupees Only";
 
-  function inWords(n) {
-    if (n < 20) return a[n];
-    if (n < 100) return b[Math.floor(n/10)] + " " + a[n%10];
-    if (n < 1000) return a[Math.floor(n/100)] + " Hundred " + inWords(n%100);
-    if (n < 100000) return inWords(Math.floor(n/1000)) + " Thousand " + inWords(n%1000);
-    if (n < 10000000) return inWords(Math.floor(n/100000)) + " Lakh " + inWords(n%100000);
-    return "";
+    const a = ["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten",
+      "Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+    const b = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+
+    function inWords(n) {
+      n = Math.floor(n);
+      if (n === 0) return "";
+      if (n < 20) return a[n];
+      if (n < 100) return b[Math.floor(n/10)] + (n%10 ? " " + a[n%10] : "");
+      if (n < 1000) return a[Math.floor(n/100)] + " Hundred" + (n%100 ? " " + inWords(n%100) : "");
+      if (n < 100000) return inWords(Math.floor(n/1000)) + " Thousand" + (n%1000 ? " " + inWords(n%1000) : "");
+      if (n < 10000000) return inWords(Math.floor(n/100000)) + " Lakh" + (n%100000 ? " " + inWords(n%100000) : "");
+      return inWords(Math.floor(n/10000000)) + " Crore" + (n%10000000 ? " " + inWords(n%10000000) : "");
+    }
+
+    return inWords(num).trim() + " Rupees Only";
   }
 
-  return inWords(num) + " Rupees Only";
-}
+  function formatDate(str) {
+    if (!str) return "";
+    const [y,m,d] = str.split("-");
+    return d + "/" + m + "/" + y;
+  }
 
-function generatePDF(){
+  function generatePDF() {
+    // Read values
+    const toVal      = document.getElementById('to').value.trim()        || "—";
+    const dateVal    = document.getElementById('date').value;
+    const bookedBy   = document.getElementById('bookedBy').value.trim()  || "—";
+    const project    = document.getElementById('project').value.trim()   || "—";
+    const emailVal   = document.getElementById('email').value.trim()     || "asif@gmail.com";
+    const mobileVal  = document.getElementById('mobile').value.trim()    || "______";
+    const hireVal    = document.getElementById('hire').value.trim()      || "—";
+    const carType    = document.getElementById('carType').value.trim()   || "—";
+    const carNo      = document.getElementById('carNo').value.trim()     || "—";
+    const kmVal      = parseFloat(document.getElementById('km').value)    || 0;
+    const rateVal    = parseFloat(document.getElementById('rate').value)  || 0;
+    const driverVal  = parseFloat(document.getElementById('driver').value)|| 0;
+    const daysVal    = parseFloat(document.getElementById('days').value)  || 0;
+    const fromDate   = document.getElementById('fromDate').value;
+    const toDateVal  = document.getElementById('toDate').value;
+    const tollVal    = parseFloat(document.getElementById('toll').value)  || 0;
+    const advVal     = parseFloat(document.getElementById('advance').value)|| 0;
 
-let invoiceNo = "INV" + new Date().getTime();
+    // Calculations
+    const kmAmount     = kmVal * rateVal;
+    const driverAmount = driverVal * daysVal;
+    const total        = kmAmount + driverAmount + tollVal - advVal;
 
-t_invoice.innerText = invoiceNo;
+    // Invoice number
+    const invoiceNo = "INV" + new Date().getTime();
 
-t_to.innerText = to.value;
-t_date.innerText = date.value;
-t_bookedBy.innerText = bookedBy.value;
-t_project.innerText = project.value;
+    // Fill invoice
+    document.getElementById('t_email').innerText     = emailVal;
+    document.getElementById('t_mobile').innerText    = mobileVal;
+    document.getElementById('t_invoice').innerText   = invoiceNo;
+    document.getElementById('t_date').innerText      = formatDate(dateVal);
+    document.getElementById('t_to').innerText        = toVal;
+    document.getElementById('t_bookedBy').innerText  = bookedBy;
+    document.getElementById('t_project').innerText   = project;
+    document.getElementById('t_hire').innerText      = hireVal;
+    document.getElementById('t_carType').innerText   = carType;
+    document.getElementById('t_carNo').innerText     = carNo;
 
-t_hire.innerText = hire.value;
-t_carType.innerText = carType.value;
-t_carNo.innerText = carNo.value;
+    // Date range
+    if (fromDate || toDateVal) {
+      document.getElementById('t_dateRange').innerText =
+        "Period: " + formatDate(fromDate) + " to " + formatDate(toDateVal);
+    } else {
+      document.getElementById('t_dateRange').innerText = "";
+    }
 
-let kmAmount = (Number(km.value) || 0) * (Number(rate.value) || 0);
-let driverAmount = (Number(driver.value) || 0) * (Number(days.value) || 0);
-let tollVal = Number(toll.value) || 0;
-let advanceVal = Number(advance.value) || 0;
+    // Details column – actual numbers
+    document.getElementById('t_kmLine').innerText     = kmVal + " KM × ₹" + rateVal + "/KM";
+    document.getElementById('t_driverLine').innerText = "₹" + driverVal + "/Day × " + daysVal + " Days";
 
-let total = kmAmount + driverAmount + tollVal - advanceVal;
+    // Amount column
+    document.getElementById('t_kmAmount').innerText     = kmAmount.toFixed(0);
+    document.getElementById('t_driverAmount').innerText = driverAmount.toFixed(0);
+    document.getElementById('t_toll').innerText         = tollVal.toFixed(0);
+    document.getElementById('t_advance').innerText      = advVal.toFixed(0);
+    document.getElementById('t_total').innerText        = total.toFixed(0);
+    document.getElementById('t_words').innerText        = numberToWords(Math.round(total));
 
-t_kmAmount.innerText = kmAmount;
-t_driverAmount.innerText = driverAmount;
-t_toll.innerText = tollVal;
-t_advance.innerText = advanceVal;
+    // Capture ONLY the invoice-box (no blank space)
+    const invoiceEl = document.getElementById('invoice');
 
-t_total.innerText = total;
-t_words.innerText = numberToWords(total);
-
-invoice.style.display = "block";
-
-html2canvas(invoice, {scale: 3}).then(canvas => {
-  const img = canvas.toDataURL("image/png");
-
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF("p", "mm", "a4");
-
-  pdf.addImage(img, "PNG", 0, 0, 210, 297);
-  pdf.save("invoice.pdf");
-
-  invoice.style.display = "none";
-});
-
-}
-
+    html2canvas(invoiceEl, {
+      scale: 3,
+      useCORS: true,
+      width: 794,
+      height: 1123,
+      windowWidth: 794,
+      windowHeight: 1123,
+      scrollX: 0,
+      scrollY: 0,
+    }).then(canvas => {
+      const img = canvas.toDataURL("image/png");
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      // A4 = 210 × 297 mm — fill exactly, no margins
+      pdf.addImage(img, "PNG", 0, 0, 210, 297);
+      pdf.save("Asad_Travels_Invoice_" + invoiceNo + ".pdf");
+    });
+  }
 </script>
 
 </body>
