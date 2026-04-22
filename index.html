@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Asad Travels — Invoice Generator</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Raleway:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
@@ -14,7 +14,7 @@
       --red: #C0000C;
       --red-dark: #8B0000;
       --red-light: #fdf2f2;
-      --gold: #b8860b;
+      --gold: #D4AF37;
       --black: #111;
       --gray-900: #1a1a1a;
       --gray-700: #444;
@@ -26,14 +26,16 @@
     }
 
     body {
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Lato', sans-serif;
       background: #1a0000;
       background-image:
         radial-gradient(ellipse at 20% 0%, rgba(192,0,12,0.18) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 100%, rgba(184,134,11,0.1) 0%, transparent 60%);
+        radial-gradient(ellipse at 80% 100%, rgba(212,175,55,0.1) 0%, transparent 60%);
       min-height: 100vh;
       padding: 30px 16px 50px;
     }
+
+    h1, h2, h3, h4 { font-family: 'Raleway', sans-serif; }
 
     /* ── PAGE HEADER ── */
     .page-header {
@@ -41,21 +43,24 @@
       margin-bottom: 30px;
     }
     .page-header h1 {
-      font-family: 'Playfair Display', serif;
       font-size: 36px;
       color: var(--white);
       letter-spacing: 3px;
+      font-weight: 800;
       text-shadow: 0 2px 20px rgba(192,0,12,0.5);
     }
     .page-header p {
+      font-family: 'Raleway', sans-serif;
       color: rgba(255,255,255,0.45);
       font-size: 13px;
       margin-top: 6px;
+      font-weight: 600;
       letter-spacing: 1px;
     }
 
-    /* ── FORM PANEL ── */
+    /* ── FORM PANEL (Mobile Responsive) ── */
     .panel {
+      width: 100%;
       max-width: 900px;
       margin: 0 auto 28px;
       background: var(--white);
@@ -74,25 +79,26 @@
     .panel-head svg { flex-shrink: 0; }
     .panel-head-text h2 {
       color: #fff;
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 700;
       letter-spacing: 0.5px;
     }
     .panel-head-text p {
-      color: rgba(255,255,255,0.7);
-      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+      font-size: 13px;
       margin-top: 2px;
     }
 
     .panel-body { padding: 26px 28px 24px; }
 
     .section-label {
-      font-size: 10px;
-      font-weight: 700;
+      font-family: 'Raleway', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1.5px;
       color: var(--red);
-      margin: 22px 0 12px;
+      margin: 22px 0 14px;
       padding-bottom: 6px;
       border-bottom: 2px solid #f0e0e0;
       display: flex;
@@ -108,29 +114,32 @@
       border-radius: 2px;
     }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    /* Responsive Grids */
+    .grid { display: grid; gap: 16px; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
 
-    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
 
     .field label {
-      font-size: 10.5px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 11px;
       font-weight: 700;
-      color: var(--gray-500);
+      color: var(--gray-700);
       text-transform: uppercase;
       letter-spacing: 0.8px;
     }
 
     .field input, .field select {
-      padding: 10px 13px;
+      padding: 12px 14px;
       border: 1.5px solid #e4e4e4;
       border-radius: 8px;
       font-size: 14px;
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Lato', sans-serif;
       color: var(--black);
       background: #fafafa;
-      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      transition: all 0.2s;
       width: 100%;
     }
     .field input:focus {
@@ -144,28 +153,28 @@
       background: var(--red-light);
       border: 1.5px dashed var(--red);
       border-radius: 8px;
-      padding: 10px 13px;
+      padding: 11px 14px;
       font-size: 15px;
-      font-weight: 700;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 800;
       color: var(--red);
       letter-spacing: 1px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .inv-no-display span { font-size: 10px; color: var(--gray-500); font-weight: 400; }
+    .inv-no-display span { font-size: 11px; color: var(--gray-500); font-weight: 600; font-family: 'Lato', sans-serif; }
 
     /* ── SIGNATURE PAD ── */
-    .sig-section {
-      margin-top: 8px;
-    }
+    .sig-section { margin-top: 10px; }
     .sig-label {
-      font-size: 10px;
-      font-weight: 700;
+      font-family: 'Raleway', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1.5px;
       color: var(--red);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       padding-bottom: 6px;
       border-bottom: 2px solid #f0e0e0;
       display: flex;
@@ -194,26 +203,22 @@
       cursor: crosshair;
       touch-action: none;
     }
-    .sig-controls {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
+    .sig-controls { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
     .btn-sig-clear {
-      padding: 8px 18px;
+      padding: 9px 18px;
       background: #f5f5f5;
       color: var(--gray-700);
       border: 1.5px solid #ddd;
       border-radius: 7px;
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: 700;
       cursor: pointer;
       transition: background 0.15s;
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Lato', sans-serif;
     }
-    .btn-sig-clear:hover { background: #eee; }
+    .btn-sig-clear:hover { background: #e0e0e0; }
     .sig-hint {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--gray-500);
       margin-left: auto;
       align-self: center;
@@ -222,19 +227,19 @@
 
     /* ── DOWNLOAD BUTTON ── */
     .btn-download {
-      margin-top: 26px;
+      margin-top: 30px;
       width: 100%;
       padding: 16px;
       background: var(--red);
       color: #fff;
       border: none;
       border-radius: 10px;
-      font-size: 15px;
-      font-weight: 700;
+      font-size: 16px;
+      font-weight: 800;
       letter-spacing: 1px;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
-      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+      font-family: 'Raleway', sans-serif;
       box-shadow: 0 4px 18px rgba(192,0,12,0.3);
       display: flex;
       align-items: center;
@@ -257,28 +262,26 @@
 
     /* =============================================
        INVOICE TEMPLATE — EXACT A4 794 × 1123px
+       White space completely eliminated via Flexbox
        ============================================= */
     .invoice-box {
       width: 794px;
-      min-height: 1123px;
+      height: 1123px; /* Absolute exact height */
       background: #ffffff;
-      font-family: Arial, sans-serif;
+      font-family: 'Lato', sans-serif;
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
 
-    /* Red top bar */
-    .inv-topbar {
-      background: var(--red);
-      width: 100%;
-      height: 10px;
-    }
+    /* Red top & bottom bleeding bars */
+    .inv-topbar { background: var(--red); width: 100%; height: 12px; flex-shrink: 0; }
+    .inv-bottombar { background: var(--red); width: 100%; height: 12px; flex-shrink: 0; }
 
     .inv-inner {
-      padding: 28px 36px 28px;
-      flex: 1;
+      padding: 32px 40px;
+      flex: 1; /* Takes up remaining height */
       display: flex;
       flex-direction: column;
     }
@@ -288,42 +291,45 @@
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 14px;
-      padding-bottom: 14px;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
       border-bottom: 2.5px solid var(--red);
     }
     .inv-brand h1 {
-      font-family: Arial, sans-serif;
+      font-family: 'Raleway', sans-serif;
       color: var(--red);
-      font-size: 32px;
+      font-size: 34px;
       font-weight: 900;
-      letter-spacing: 3px;
+      letter-spacing: 2px;
       line-height: 1;
     }
     .inv-brand p {
+      font-family: 'Raleway', sans-serif;
       font-size: 11px;
-      color: var(--gray-500);
+      color: var(--gray-700);
+      font-weight: 700;
       letter-spacing: 4px;
       text-transform: uppercase;
-      margin-top: 4px;
+      margin-top: 6px;
     }
     .inv-header-right {
       text-align: right;
-      font-size: 11.5px;
+      font-size: 12.5px;
       color: var(--gray-700);
-      line-height: 1.7;
+      line-height: 1.8;
     }
-    .inv-header-right strong { color: var(--black); }
+    .inv-header-right strong { color: var(--black); font-family: 'Raleway', sans-serif; font-weight: 700; }
 
     /* ── INVOICE TITLE BAR ── */
     .inv-title-bar {
       background: var(--red);
       color: #fff;
       text-align: center;
-      font-size: 15px;
-      font-weight: 700;
+      font-family: 'Raleway', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
       letter-spacing: 6px;
-      padding: 8px 0;
+      padding: 10px 0;
       margin-bottom: 0;
     }
 
@@ -336,36 +342,39 @@
     }
     .inv-info-left {
       width: 55%;
-      padding: 12px 16px;
+      padding: 14px 18px;
       border-right: 1.5px solid #ccc;
-      font-size: 13px;
       line-height: 1.8;
     }
     .inv-info-left .to-label {
-      font-size: 10px;
-      font-weight: 700;
+      font-family: 'Raleway', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1px;
       color: var(--red);
-      margin-bottom: 3px;
+      margin-bottom: 4px;
     }
     .inv-info-left .to-name {
-      font-size: 15px;
-      font-weight: 700;
+      font-family: 'Raleway', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
       color: var(--black);
       margin-bottom: 6px;
+      line-height: 1.3;
     }
     .inv-info-right {
       width: 45%;
-      padding: 12px 16px;
-      font-size: 12.5px;
+      padding: 14px 18px;
+      font-size: 13.5px;
       line-height: 2;
     }
-    .inv-info-right table { width: 100%; }
+    .inv-info-right table { width: 100%; border-collapse: collapse; }
     .inv-info-right td:first-child {
-      color: var(--gray-500);
-      font-weight: 600;
-      width: 48%;
+      color: var(--gray-700);
+      font-family: 'Raleway', sans-serif;
+      font-weight: 700;
+      width: 45%;
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -373,77 +382,110 @@
     .inv-info-right td:last-child {
       color: var(--black);
       font-weight: 700;
-      font-size: 13px;
+      font-size: 14px;
+      text-align: right;
     }
 
-    /* ── MAIN TABLE ── */
+    /* ── MAIN TABLE (Aligned Inner Tables) ── */
     .inv-table {
       width: 100%;
       border-collapse: collapse;
       border: 1.5px solid #ccc;
       border-top: none;
-      font-size: 13px;
     }
-    .inv-table thead tr {
-      background: #f7f7f7;
+    .inv-table > thead > tr > th {
+      background: #f9f9f9;
+      border-bottom: 1.5px solid #ccc;
+      padding: 0;
     }
-    .inv-table th {
-      border: 1px solid #ccc;
-      padding: 10px 14px;
-      font-size: 11px;
-      font-weight: 700;
+
+    .th-desc {
+      padding: 12px 18px !important;
+      font-family: 'Raleway', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1px;
       color: var(--gray-700);
-      text-align: center;
-    }
-    .inv-table th:first-child { text-align: left; }
-
-    .inv-table td {
-      border: 1px solid #ccc;
-      padding: 14px 16px;
-      vertical-align: top;
+      text-align: left;
+      border-right: 1.5px solid #ccc;
     }
 
-    .td-desc { line-height: 2; font-size: 13px; }
-    .td-desc .desc-title { font-weight: 700; color: var(--gray-700); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .td-desc .desc-val { color: var(--black); font-weight: 600; font-size: 13.5px; }
-    .td-desc .desc-row { margin-bottom: 4px; }
+    /* Header matching inner structure */
+    .inner-header-table { width: 100%; border-collapse: collapse; }
+    .inner-header-table td {
+      padding: 12px 18px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-700);
+    }
+    .th-detail { width: 65%; text-align: center; border-right: 1px solid #ccc; }
+    .th-amount { width: 35%; text-align: right; }
 
+    .inv-table > tbody > tr > td { padding: 0; vertical-align: top; }
+
+    .td-desc-wrap {
+      padding: 16px 18px;
+      border-right: 1.5px solid #ccc;
+    }
+
+    .td-desc-wrap .desc-row { margin-bottom: 6px; font-size: 14px; }
+    .td-desc-wrap .desc-title {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 800;
+      color: var(--gray-700);
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-right: 6px;
+    }
+    .td-desc-wrap .desc-val { color: var(--black); font-weight: 700; }
+
+    /* The Bold Gold Period Badge */
     .period-badge {
       display: inline-block;
-      background: #fff3cd;
-      border: 1px solid #ffc107;
-      color: #856404;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 9px;
-      border-radius: 4px;
-      margin-top: 6px;
-      letter-spacing: 0.3px;
+      background: var(--gold);
+      color: #fff;
+      font-family: 'Raleway', sans-serif;
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-top: 10px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(212,175,55,0.3);
     }
 
-    .td-details {
-      text-align: center;
-      line-height: 2.6;
-      font-size: 13px;
-      color: var(--gray-700);
+    /* Perfect Horizontal Alignment Table */
+    .inner-charges-table {
+      width: 100%;
+      border-collapse: collapse;
+      height: 100%;
     }
-    .td-amount {
+    .inner-charges-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid #eee;
+    }
+    .inner-charges-table tr:last-child td { border-bottom: none; }
+    
+    .ic-detail {
+      width: 65%;
+      text-align: center;
+      font-size: 13.5px;
+      color: var(--gray-700);
+      border-right: 1px solid #ccc;
+    }
+    .ic-amount {
+      width: 35%;
       text-align: right;
-      line-height: 2.6;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--black);
-      padding-right: 18px !important;
     }
-    .amount-sub {
-      color: var(--gray-700);
-      font-weight: 600;
-    }
-    .amount-deduct {
-      color: #c0000c;
-    }
+    .amount-deduct { color: var(--red); }
 
     /* ── TOTAL SECTION ── */
     .inv-total-row {
@@ -452,48 +494,55 @@
       border-top: 2.5px solid var(--red);
     }
     .words-box {
-      width: 62%;
-      padding: 14px 16px;
+      width: 60%;
+      padding: 16px 18px;
       border-right: 1.5px solid #ccc;
-      font-size: 12px;
     }
     .words-box .words-label {
-      font-size: 10px;
-      font-weight: 700;
+      font-family: 'Raleway', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1px;
       color: var(--red);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
     .words-box .words-text {
       font-style: italic;
       color: var(--black);
-      font-weight: 600;
-      font-size: 12.5px;
+      font-weight: 700;
+      font-size: 14px;
       line-height: 1.5;
     }
     .grand-total-box {
-      width: 38%;
+      width: 40%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 14px 10px;
+      padding: 16px;
       background: var(--red);
     }
     .grand-total-box .gt-label {
-      font-size: 10px;
-      font-weight: 700;
+      font-family: 'Raleway', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 2px;
-      color: rgba(255,255,255,0.75);
+      color: rgba(255,255,255,0.85);
       margin-bottom: 4px;
     }
     .grand-total-box .gt-amount {
-      font-size: 26px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 28px;
       font-weight: 900;
       color: #fff;
       letter-spacing: 1px;
+    }
+
+    /* ── SPACER (Forces footer flush bottom) ── */
+    .inv-spacer {
+      flex: 1; /* This absorbs all leftover vertical space */
     }
 
     /* ── SIGNATURE AREA ── */
@@ -501,55 +550,49 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      margin-top: auto;
-      padding-top: 30px;
-      border-top: 1px solid #eee;
+      padding-top: 24px;
+      margin-top: 24px;
+      border-top: 2px solid #eee;
     }
     .inv-footer-note {
-      font-size: 11px;
-      color: var(--gray-500);
+      font-size: 12px;
+      color: var(--gray-700);
       line-height: 1.7;
-      max-width: 55%;
+      max-width: 60%;
     }
-    .inv-footer-note strong { color: var(--red); }
+    .inv-footer-note strong { color: var(--red); font-weight: 700; font-family: 'Raleway', sans-serif; font-size: 13px;}
     .inv-sig-block {
       text-align: center;
-      font-size: 12px;
     }
     .inv-sig-img {
-      height: 60px;
-      width: 180px;
+      height: 65px;
+      width: 200px;
       display: block;
-      margin: 0 auto 4px;
+      margin: 0 auto 6px;
       object-fit: contain;
     }
-    .inv-sig-img.empty-sig {
-      border-bottom: 1.5px solid #999;
-    }
+    .inv-sig-img.empty-sig { border-bottom: 1.5px solid #999; }
     .inv-sig-label {
-      font-weight: 700;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 800;
       color: var(--black);
-      font-size: 12px;
+      font-size: 13px;
     }
     .inv-sig-sublabel {
       color: var(--gray-500);
-      font-size: 10.5px;
+      font-size: 11px;
       letter-spacing: 0.5px;
+      margin-top: 2px;
     }
 
-    /* Red bottom bar */
-    .inv-bottombar {
-      background: var(--red);
-      height: 8px;
-    }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 680px) {
-      .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
-      .panel-body { padding: 18px 16px; }
-    }
-    @media (max-width: 440px) {
-      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    /* ── RESPONSIVE MOBILE TWEAKS ── */
+    @media (max-width: 600px) {
+      body { padding: 16px 12px; }
+      .page-header h1 { font-size: 28px; }
+      .panel-body { padding: 20px 18px; }
+      .btn-download { font-size: 14px; padding: 15px; }
+      .sig-controls { justify-content: space-between; }
+      .sig-hint { margin-left: 0; width: 100%; text-align: center; margin-top: 5px; }
     }
   </style>
 </head>
@@ -560,20 +603,19 @@
   <p>PROFESSIONAL INVOICE GENERATOR</p>
 </div>
 
-<!-- ── FORM ── -->
 <div class="panel">
   <div class="panel-head">
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/></svg>
     <div class="panel-head-text">
       <h2>Create New Invoice</h2>
-      <p>Fill in the details below and download your professional PDF invoice</p>
+      <p>Fill details below to generate a perfectly formatted A4 PDF</p>
     </div>
   </div>
 
   <div class="panel-body">
 
     <div class="section-label">Invoice Info</div>
-    <div class="grid-3">
+    <div class="grid grid-2">
       <div class="field">
         <label>Invoice Number</label>
         <div class="inv-no-display" id="invNoDisplay">
@@ -585,56 +627,50 @@
         <label>Invoice Date</label>
         <input id="date" type="date">
       </div>
-      <div class="field">
-        <label>Mobile No</label>
-        <input id="mobile" placeholder="e.g. 9876543210">
-      </div>
     </div>
 
     <div class="section-label">Client Details</div>
-    <div class="grid-3">
+    <div class="grid grid-2">
       <div class="field"><label>To (Client Name)</label><input id="to" placeholder="e.g. ABC Company"></div>
       <div class="field"><label>Booked By</label><input id="bookedBy" placeholder="e.g. Rahul Sharma"></div>
-      <div class="field"><label>Email (optional)</label><input id="email" placeholder="e.g. asif@gmail.com"></div>
     </div>
-    <div class="field" style="margin-top:14px">
+    <div class="field" style="margin-top:16px">
       <label>Project / Purpose</label>
       <input id="project" placeholder="e.g. Site Visit — Andheri to Pune">
     </div>
 
     <div class="section-label">Vehicle Details</div>
-    <div class="grid-3">
+    <div class="grid grid-3">
       <div class="field"><label>Hire Charges Of (Route)</label><input id="hire" placeholder="e.g. Mumbai – Pune"></div>
       <div class="field"><label>Car Type</label><input id="carType" placeholder="e.g. Toyota Innova"></div>
       <div class="field"><label>Car Number</label><input id="carNo" placeholder="e.g. MH01 AB 1234"></div>
     </div>
 
     <div class="section-label">Trip Charges</div>
-    <div class="grid-4">
+    <div class="grid grid-4">
       <div class="field"><label>Total KM</label><input id="km" type="number" placeholder="e.g. 459" min="0"></div>
       <div class="field"><label>Rate / KM (₹)</label><input id="rate" type="number" placeholder="e.g. 12" min="0"></div>
       <div class="field"><label>Driver Charge / Day (₹)</label><input id="driver" type="number" placeholder="e.g. 250" min="0"></div>
       <div class="field"><label>No. of Days</label><input id="days" type="number" placeholder="e.g. 2" min="0"></div>
     </div>
-    <div class="grid-3" style="margin-top:14px">
+    <div class="grid grid-3" style="margin-top:16px">
       <div class="field"><label>Trip From Date</label><input id="fromDate" type="date"></div>
       <div class="field"><label>Trip To Date</label><input id="toDate" type="date"></div>
       <div class="field"><label>Toll Charges (₹)</label><input id="toll" type="number" placeholder="e.g. 250" min="0"></div>
     </div>
-    <div class="grid-2" style="margin-top:14px">
+    <div class="grid grid-2" style="margin-top:16px">
       <div class="field"><label>Advance Paid (₹)</label><input id="advance" type="number" placeholder="e.g. 500" min="0"></div>
       <div class="field"><label>Additional Notes (optional)</label><input id="notes" placeholder="e.g. Night halt included"></div>
     </div>
 
-    <!-- SIGNATURE PAD -->
     <div class="sig-section">
-      <div class="sig-label" style="margin-top:22px;">Digital Signature (Authorised)</div>
+      <div class="sig-label" style="margin-top:24px;">Digital Signature (Authorised)</div>
       <div class="sig-wrapper">
         <canvas id="sigCanvas"></canvas>
       </div>
       <div class="sig-controls">
         <button class="btn-sig-clear" onclick="clearSignature()">✕ Clear Signature</button>
-        <span class="sig-hint">Draw your signature above with mouse or finger</span>
+        <span class="sig-hint">Draw your signature above with mouse or touch</span>
       </div>
     </div>
 
@@ -646,7 +682,6 @@
   </div>
 </div>
 
-<!-- ── HIDDEN INVOICE ── -->
 <div id="invoice-wrapper">
   <div class="invoice-box" id="invoice">
 
@@ -654,27 +689,24 @@
 
     <div class="inv-inner">
 
-      <!-- Header -->
       <div class="inv-header-row">
         <div class="inv-brand">
           <h1>ASAD TRAVELS</h1>
           <p>Car Rental Solution</p>
         </div>
         <div class="inv-header-right">
-          <strong>Email:</strong> <span id="t_email"></span><br>
-          <strong>Mobile:</strong> <span id="t_mobile"></span>
+          <strong>Email:</strong> asadtravels@gmail.com<br>
+          <strong>Mobile:</strong> +91 98765 43210
         </div>
       </div>
 
-      <!-- Invoice Title -->
       <div class="inv-title-bar">TAX INVOICE</div>
 
-      <!-- Info Row -->
       <div class="inv-info-row">
         <div class="inv-info-left">
           <div class="to-label">Bill To</div>
           <div class="to-name" id="t_to"></div>
-          <div style="font-size:12px; color:#555; margin-top:2px;">
+          <div style="font-size:13px; color:#555; margin-top:2px;">
             <span id="t_project_info"></span>
           </div>
         </div>
@@ -687,41 +719,53 @@
         </div>
       </div>
 
-      <!-- Main Table -->
       <table class="inv-table">
         <thead>
           <tr>
-            <th style="width:40%; text-align:left;">Description</th>
-            <th style="width:35%;">Details</th>
-            <th style="width:25%;">Amount (₹)</th>
+            <th class="th-desc" style="width:45%;">Booking Description</th>
+            <th style="width:55%; padding:0; border:none;">
+              <table class="inner-header-table">
+                <tr>
+                  <td class="th-detail">Charge Details</td>
+                  <td class="th-amount">Amount (₹)</td>
+                </tr>
+              </table>
+            </th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td class="td-desc">
+            <td class="td-desc-wrap">
               <div class="desc-row"><span class="desc-title">Route: </span><span class="desc-val" id="t_hire"></span></div>
               <div class="desc-row"><span class="desc-title">Car Type: </span><span class="desc-val" id="t_carType"></span></div>
               <div class="desc-row"><span class="desc-title">Car No: </span><span class="desc-val" id="t_carNo"></span></div>
               <div id="t_dateRange_wrap"><span class="period-badge" id="t_dateRange"></span></div>
-              <div id="t_notes_wrap" style="margin-top:8px; font-size:12px; color:#666; font-style:italic;"><span id="t_notes"></span></div>
+              <div id="t_notes_wrap" style="margin-top:12px; font-size:12.5px; color:#555; font-style:italic;"><span id="t_notes"></span></div>
             </td>
-            <td class="td-details">
-              <span id="t_kmLine"></span><br>
-              <span id="t_driverLine"></span><br>
-              Toll / Road Tax<br>
-              Less: Advance Paid
-            </td>
-            <td class="td-amount">
-              <span id="t_kmAmount" class="amount-sub"></span><br>
-              <span id="t_driverAmount" class="amount-sub"></span><br>
-              <span id="t_toll" class="amount-sub"></span><br>
-              <span id="t_advance" class="amount-deduct"></span>
+            <td>
+              <table class="inner-charges-table">
+                <tr>
+                  <td class="ic-detail" id="t_kmLine"></td>
+                  <td class="ic-amount" id="t_kmAmount"></td>
+                </tr>
+                <tr>
+                  <td class="ic-detail" id="t_driverLine"></td>
+                  <td class="ic-amount" id="t_driverAmount"></td>
+                </tr>
+                <tr>
+                  <td class="ic-detail">Toll / Road Tax / Parking</td>
+                  <td class="ic-amount" id="t_toll"></td>
+                </tr>
+                <tr>
+                  <td class="ic-detail" style="color:var(--red); font-weight:700; font-family:'Raleway',sans-serif;">Less: Advance Paid</td>
+                  <td class="ic-amount amount-deduct" id="t_advance"></td>
+                </tr>
+              </table>
             </td>
           </tr>
         </tbody>
       </table>
 
-      <!-- Total Row -->
       <div class="inv-total-row">
         <div class="words-box">
           <div class="words-label">Amount in Words</div>
@@ -733,7 +777,8 @@
         </div>
       </div>
 
-      <!-- Footer / Signature -->
+      <div class="inv-spacer"></div>
+
       <div class="inv-footer">
         <div class="inv-footer-note">
           <strong>Thank you for choosing Asad Travels!</strong><br>
@@ -748,15 +793,13 @@
         </div>
       </div>
 
-    </div><!-- /inv-inner -->
-
-    <div class="inv-bottombar"></div>
+    </div><div class="inv-bottombar"></div>
 
   </div>
 </div>
 
 <script>
-  // ── INVOICE NUMBER (auto-increment via localStorage) ──
+  // ── INVOICE NUMBER ──
   function getNextInvoiceNo() {
     let counter = parseInt(localStorage.getItem('asad_inv_counter') || '0', 10);
     counter += 1;
@@ -764,15 +807,12 @@
     return 'INV' + String(counter).padStart(3, '0');
   }
 
-  // Preview the NEXT invoice number on load (without incrementing)
   function peekInvoiceNo() {
     let counter = parseInt(localStorage.getItem('asad_inv_counter') || '0', 10);
     return 'INV' + String(counter + 1).padStart(3, '0');
   }
 
   document.getElementById('invNoValue').textContent = peekInvoiceNo();
-
-  // Set today's date
   document.getElementById('date').valueAsDate = new Date();
 
   // ── SIGNATURE PAD ──
@@ -791,7 +831,7 @@
     canvas.style.height = '130px';
     ctx.scale(ratio, ratio);
     ctx.strokeStyle = '#111';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.5;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
   }
@@ -881,8 +921,6 @@
     const dateVal    = document.getElementById('date').value;
     const bookedBy   = document.getElementById('bookedBy').value.trim()   || "—";
     const project    = document.getElementById('project').value.trim()    || "";
-    const emailVal   = document.getElementById('email').value.trim()      || "asif@gmail.com";
-    const mobileVal  = document.getElementById('mobile').value.trim()     || "______";
     const hireVal    = document.getElementById('hire').value.trim()       || "—";
     const carType    = document.getElementById('carType').value.trim()    || "—";
     const carNo      = document.getElementById('carNo').value.trim()      || "—";
@@ -901,8 +939,6 @@
     const total        = kmAmount + driverAmount + tollVal - advVal;
 
     // Fill invoice fields
-    document.getElementById('t_email').innerText     = emailVal;
-    document.getElementById('t_mobile').innerText    = mobileVal;
     document.getElementById('t_invoice').innerText   = invoiceNo;
     document.getElementById('t_date').innerText      = formatDate(dateVal);
     document.getElementById('t_to').innerText        = toVal;
@@ -915,7 +951,7 @@
     if (fromDate || toDateVal) {
       const from = fromDate ? formatDate(fromDate) : "?";
       const to   = toDateVal ? formatDate(toDateVal) : "?";
-      document.getElementById('t_dateRange').innerText = "Period: " + from + "  →  " + to;
+      document.getElementById('t_dateRange').innerText = from + "  →  " + to;
       document.getElementById('t_dateRange_wrap').style.display = '';
     } else {
       document.getElementById('t_dateRange_wrap').style.display = 'none';
@@ -953,7 +989,7 @@
     // Update preview display
     document.getElementById('invNoValue').textContent = peekInvoiceNo();
 
-    // Capture
+    // Capture (Forcing strictly 794x1123 generation)
     const invoiceEl = document.getElementById('invoice');
 
     html2canvas(invoiceEl, {
@@ -963,7 +999,8 @@
       backgroundColor: '#ffffff',
       width: 794,
       height: 1123,
-      windowWidth: 1200,
+      windowWidth: 794, 
+      windowHeight: 1123,
       scrollX: 0,
       scrollY: 0,
     }).then(canvas => {
