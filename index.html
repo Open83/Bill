@@ -58,7 +58,7 @@
       letter-spacing: 1px;
     }
 
-    /* ── FORM PANEL (Mobile Responsive) ── */
+    /* ── FORM PANEL ── */
     .panel {
       width: 100%;
       max-width: 900px;
@@ -114,7 +114,6 @@
       border-radius: 2px;
     }
 
-    /* Responsive Grids */
     .grid { display: grid; gap: 16px; }
     .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
     .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
@@ -315,7 +314,7 @@
       font-size: 13px;
       color: var(--gray-700);
       line-height: 1.8;
-      letter-spacing: 0.5px; /* Added tracking to fix font overlap */
+      letter-spacing: 0.5px;
     }
     .inv-header-right strong { color: var(--black); font-family: 'Raleway', sans-serif; font-weight: 700; }
 
@@ -425,17 +424,19 @@
 
     .inv-table > tbody > tr > td { padding: 0; vertical-align: top; }
 
-    /* Expanded spacing in the description wrap */
+    /* ── DESCRIPTION COLUMN ALIGNMENT FIXES ── */
     .td-desc-wrap {
       padding: 24px 24px;
       border-right: 1.5px solid #ccc;
     }
 
-    /* Increased margin-bottom for professional look */
     .td-desc-wrap .desc-row { 
       margin-bottom: 12px; 
       font-size: 14.5px; 
+      display: flex;        /* Ensures proper side-by-side layout */
+      align-items: center;  /* Vertically centers label with value */
     }
+
     .td-desc-wrap .desc-title {
       font-family: 'Raleway', sans-serif;
       font-weight: 800;
@@ -443,12 +444,21 @@
       font-size: 11.5px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-right: 8px;
+      width: 85px;         /* Fixed width to perfectly align the values */
+      flex-shrink: 0;      /* Prevents label from shrinking */
     }
-    .td-desc-wrap .desc-val { color: var(--black); font-weight: 700; }
 
+    .td-desc-wrap .desc-val { 
+      color: var(--black); 
+      font-weight: 700; 
+      text-transform: uppercase; /* Automatically capitalizes inputs like "mh04..." */
+    }
+
+    /* ── PERIOD BADGE VERTICAL ALIGNMENT FIX ── */
     .period-badge {
-      display: inline-block;
+      display: inline-flex;       /* Allows precise inner alignment */
+      align-items: center;        /* Perfect vertical centering */
+      justify-content: center;    /* Perfect horizontal centering */
       background: var(--gold);
       color: #fff;
       font-family: 'Raleway', sans-serif;
@@ -457,7 +467,8 @@
       padding: 6px 16px;
       border-radius: 20px;
       margin-top: 14px;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;        /* Spaced out slightly for better readability */
+      line-height: 1;             /* Strips default text line height pushing text down */
       box-shadow: 0 2px 8px rgba(212,175,55,0.3);
     }
 
@@ -467,7 +478,6 @@
       height: 100%;
     }
     
-    /* Increased padding inside charge rows */
     .inner-charges-table td {
       padding: 18px 20px;
       border-bottom: 1px solid #eee;
@@ -963,7 +973,6 @@
       document.getElementById('t_notes_wrap').style.display = 'none';
     }
 
-    // UPDATED JS to fix spacing around units, symbols and rates:
     document.getElementById('t_kmLine').innerText     = kmVal + " KM  ×  ₹ " + rateVal + " / KM";
     document.getElementById('t_driverLine').innerText = "₹ " + driverVal + " / Day  ×  " + daysVal + " Days";
 
