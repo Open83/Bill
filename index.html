@@ -262,11 +262,10 @@
 
     /* =============================================
        INVOICE TEMPLATE — EXACT A4 794 × 1123px
-       White space completely eliminated via Flexbox
        ============================================= */
     .invoice-box {
       width: 794px;
-      height: 1123px; /* Absolute exact height */
+      height: 1123px;
       background: #ffffff;
       font-family: 'Lato', sans-serif;
       position: relative;
@@ -275,13 +274,12 @@
       flex-direction: column;
     }
 
-    /* Red top & bottom bleeding bars */
     .inv-topbar { background: var(--red); width: 100%; height: 12px; flex-shrink: 0; }
     .inv-bottombar { background: var(--red); width: 100%; height: 12px; flex-shrink: 0; }
 
     .inv-inner {
       padding: 32px 40px;
-      flex: 1; /* Takes up remaining height */
+      flex: 1;
       display: flex;
       flex-direction: column;
     }
@@ -314,9 +312,10 @@
     }
     .inv-header-right {
       text-align: right;
-      font-size: 12.5px;
+      font-size: 13px;
       color: var(--gray-700);
       line-height: 1.8;
+      letter-spacing: 0.5px; /* Added tracking to fix font overlap */
     }
     .inv-header-right strong { color: var(--black); font-family: 'Raleway', sans-serif; font-weight: 700; }
 
@@ -342,7 +341,7 @@
     }
     .inv-info-left {
       width: 55%;
-      padding: 14px 18px;
+      padding: 16px 20px;
       border-right: 1.5px solid #ccc;
       line-height: 1.8;
     }
@@ -365,7 +364,7 @@
     }
     .inv-info-right {
       width: 45%;
-      padding: 14px 18px;
+      padding: 16px 20px;
       font-size: 13.5px;
       line-height: 2;
     }
@@ -386,7 +385,7 @@
       text-align: right;
     }
 
-    /* ── MAIN TABLE (Aligned Inner Tables) ── */
+    /* ── MAIN TABLE ── */
     .inv-table {
       width: 100%;
       border-collapse: collapse;
@@ -400,7 +399,7 @@
     }
 
     .th-desc {
-      padding: 12px 18px !important;
+      padding: 12px 24px !important;
       font-family: 'Raleway', sans-serif;
       font-size: 12px;
       font-weight: 800;
@@ -411,10 +410,9 @@
       border-right: 1.5px solid #ccc;
     }
 
-    /* Header matching inner structure */
     .inner-header-table { width: 100%; border-collapse: collapse; }
     .inner-header-table td {
-      padding: 12px 18px;
+      padding: 12px 20px;
       font-family: 'Raleway', sans-serif;
       font-size: 12px;
       font-weight: 800;
@@ -427,12 +425,17 @@
 
     .inv-table > tbody > tr > td { padding: 0; vertical-align: top; }
 
+    /* Expanded spacing in the description wrap */
     .td-desc-wrap {
-      padding: 16px 18px;
+      padding: 24px 24px;
       border-right: 1.5px solid #ccc;
     }
 
-    .td-desc-wrap .desc-row { margin-bottom: 6px; font-size: 14px; }
+    /* Increased margin-bottom for professional look */
+    .td-desc-wrap .desc-row { 
+      margin-bottom: 12px; 
+      font-size: 14.5px; 
+    }
     .td-desc-wrap .desc-title {
       font-family: 'Raleway', sans-serif;
       font-weight: 800;
@@ -440,11 +443,10 @@
       font-size: 11.5px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-right: 6px;
+      margin-right: 8px;
     }
     .td-desc-wrap .desc-val { color: var(--black); font-weight: 700; }
 
-    /* The Bold Gold Period Badge */
     .period-badge {
       display: inline-block;
       background: var(--gold);
@@ -452,21 +454,22 @@
       font-family: 'Raleway', sans-serif;
       font-size: 11.5px;
       font-weight: 800;
-      padding: 5px 14px;
+      padding: 6px 16px;
       border-radius: 20px;
-      margin-top: 10px;
+      margin-top: 14px;
       letter-spacing: 0.5px;
       box-shadow: 0 2px 8px rgba(212,175,55,0.3);
     }
 
-    /* Perfect Horizontal Alignment Table */
     .inner-charges-table {
       width: 100%;
       border-collapse: collapse;
       height: 100%;
     }
+    
+    /* Increased padding inside charge rows */
     .inner-charges-table td {
-      padding: 14px 18px;
+      padding: 18px 20px;
       border-bottom: 1px solid #eee;
     }
     .inner-charges-table tr:last-child td { border-bottom: none; }
@@ -474,14 +477,14 @@
     .ic-detail {
       width: 65%;
       text-align: center;
-      font-size: 13.5px;
+      font-size: 14px;
       color: var(--gray-700);
       border-right: 1px solid #ccc;
     }
     .ic-amount {
       width: 35%;
       text-align: right;
-      font-size: 14px;
+      font-size: 14.5px;
       font-weight: 700;
       color: var(--black);
     }
@@ -495,7 +498,7 @@
     }
     .words-box {
       width: 60%;
-      padding: 16px 18px;
+      padding: 18px 20px;
       border-right: 1.5px solid #ccc;
     }
     .words-box .words-label {
@@ -520,7 +523,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 18px;
       background: var(--red);
     }
     .grand-total-box .gt-label {
@@ -530,7 +533,7 @@
       text-transform: uppercase;
       letter-spacing: 2px;
       color: rgba(255,255,255,0.85);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
     .grand-total-box .gt-amount {
       font-family: 'Raleway', sans-serif;
@@ -540,10 +543,7 @@
       letter-spacing: 1px;
     }
 
-    /* ── SPACER (Forces footer flush bottom) ── */
-    .inv-spacer {
-      flex: 1; /* This absorbs all leftover vertical space */
-    }
+    .inv-spacer { flex: 1; }
 
     /* ── SIGNATURE AREA ── */
     .inv-footer {
@@ -561,9 +561,7 @@
       max-width: 60%;
     }
     .inv-footer-note strong { color: var(--red); font-weight: 700; font-family: 'Raleway', sans-serif; font-size: 13px;}
-    .inv-sig-block {
-      text-align: center;
-    }
+    .inv-sig-block { text-align: center; }
     .inv-sig-img {
       height: 65px;
       width: 200px;
@@ -695,7 +693,7 @@
           <p>Car Rental Solution</p>
         </div>
         <div class="inv-header-right">
-          <strong>Email:</strong> asadtravels@gmail.com<br>
+          <strong>Email:</strong> <span>asadtravels@gmail.com</span><br>
           <strong>Mobile:</strong> +91 98765 43210
         </div>
       </div>
@@ -706,7 +704,7 @@
         <div class="inv-info-left">
           <div class="to-label">Bill To</div>
           <div class="to-name" id="t_to"></div>
-          <div style="font-size:13px; color:#555; margin-top:2px;">
+          <div style="font-size:13.5px; color:#555; margin-top:2px;">
             <span id="t_project_info"></span>
           </div>
         </div>
@@ -740,7 +738,7 @@
               <div class="desc-row"><span class="desc-title">Car Type: </span><span class="desc-val" id="t_carType"></span></div>
               <div class="desc-row"><span class="desc-title">Car No: </span><span class="desc-val" id="t_carNo"></span></div>
               <div id="t_dateRange_wrap"><span class="period-badge" id="t_dateRange"></span></div>
-              <div id="t_notes_wrap" style="margin-top:12px; font-size:12.5px; color:#555; font-style:italic;"><span id="t_notes"></span></div>
+              <div id="t_notes_wrap" style="margin-top:16px; font-size:13px; color:#555; font-style:italic;"><span id="t_notes"></span></div>
             </td>
             <td>
               <table class="inner-charges-table">
@@ -793,7 +791,9 @@
         </div>
       </div>
 
-    </div><div class="inv-bottombar"></div>
+    </div>
+
+    <div class="inv-bottombar"></div>
 
   </div>
 </div>
@@ -938,7 +938,6 @@
     const driverAmount = driverVal * daysVal;
     const total        = kmAmount + driverAmount + tollVal - advVal;
 
-    // Fill invoice fields
     document.getElementById('t_invoice').innerText   = invoiceNo;
     document.getElementById('t_date').innerText      = formatDate(dateVal);
     document.getElementById('t_to').innerText        = toVal;
@@ -964,17 +963,17 @@
       document.getElementById('t_notes_wrap').style.display = 'none';
     }
 
-    document.getElementById('t_kmLine').innerText     = kmVal + " KM × ₹" + rateVal + "/KM";
-    document.getElementById('t_driverLine').innerText = "₹" + driverVal + "/Day × " + daysVal + " Days";
+    // UPDATED JS to fix spacing around units, symbols and rates:
+    document.getElementById('t_kmLine').innerText     = kmVal + " KM  ×  ₹ " + rateVal + " / KM";
+    document.getElementById('t_driverLine').innerText = "₹ " + driverVal + " / Day  ×  " + daysVal + " Days";
 
     document.getElementById('t_kmAmount').innerText     = fmt(kmAmount);
     document.getElementById('t_driverAmount').innerText = fmt(driverAmount);
     document.getElementById('t_toll').innerText         = fmt(tollVal);
-    document.getElementById('t_advance').innerText      = "− " + fmt(advVal);
+    document.getElementById('t_advance').innerText      = "− ₹ " + fmt(advVal);
     document.getElementById('t_total').innerText        = fmt(total);
     document.getElementById('t_words').innerText        = numberToWords(Math.round(total));
 
-    // Signature
     const sigImg   = document.getElementById('t_sig');
     const sigBlank = document.getElementById('t_sig_blank');
     if (hasSig) {
@@ -986,10 +985,8 @@
       sigBlank.style.display = 'block';
     }
 
-    // Update preview display
     document.getElementById('invNoValue').textContent = peekInvoiceNo();
 
-    // Capture (Forcing strictly 794x1123 generation)
     const invoiceEl = document.getElementById('invoice');
 
     html2canvas(invoiceEl, {
