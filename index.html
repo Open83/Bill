@@ -2,378 +2,851 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Asad Travels Billing</title>
+  <title>Asad Travels — Invoice Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #C0000C;
+      --red-dark: #8B0000;
+      --red-light: #fdf2f2;
+      --gold: #b8860b;
+      --black: #111;
+      --gray-900: #1a1a1a;
+      --gray-700: #444;
+      --gray-500: #777;
+      --gray-300: #ccc;
+      --gray-100: #f5f5f5;
+      --white: #ffffff;
+      --shadow: 0 8px 40px rgba(0,0,0,0.13);
+    }
 
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #eef2f7;
-      padding: 20px;
+      font-family: 'DM Sans', sans-serif;
+      background: #1a0000;
+      background-image:
+        radial-gradient(ellipse at 20% 0%, rgba(192,0,12,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, rgba(184,134,11,0.1) 0%, transparent 60%);
       min-height: 100vh;
+      padding: 30px 16px 50px;
     }
 
-    /* ─── FORM PANEL ─── */
-    .panel {
-      max-width: 860px;
-      margin: 0 auto 30px auto;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      padding: 28px 28px 22px;
-    }
-
-    .panel-title {
+    /* ── PAGE HEADER ── */
+    .page-header {
       text-align: center;
-      font-size: 22px;
-      font-weight: 700;
-      color: #cc0000;
-      letter-spacing: 1px;
-      margin-bottom: 6px;
+      margin-bottom: 30px;
     }
-
-    .panel-sub {
-      text-align: center;
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      color: var(--white);
+      letter-spacing: 3px;
+      text-shadow: 0 2px 20px rgba(192,0,12,0.5);
+    }
+    .page-header p {
+      color: rgba(255,255,255,0.45);
       font-size: 13px;
-      color: #666;
-      margin-bottom: 22px;
+      margin-top: 6px;
+      letter-spacing: 1px;
     }
 
-    .section-label {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: #888;
-      letter-spacing: 0.8px;
-      margin: 18px 0 8px;
-      border-bottom: 1px solid #e0e0e0;
-      padding-bottom: 4px;
+    /* ── FORM PANEL ── */
+    .panel {
+      max-width: 900px;
+      margin: 0 auto 28px;
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
     }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-
-    .field { display: flex; flex-direction: column; gap: 4px; }
-
-    .field label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #555;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    .panel-head {
+      background: var(--red);
+      padding: 18px 30px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-
-    .field input {
-      padding: 9px 11px;
-      border: 1.5px solid #dde1e8;
-      border-radius: 7px;
-      font-size: 14px;
-      color: #222;
-      background: #fafbfd;
-      transition: border 0.2s;
-      width: 100%;
-    }
-
-    .field input:focus {
-      outline: none;
-      border-color: #cc0000;
-      background: #fff;
-    }
-
-    .btn-download {
-      margin-top: 22px;
-      width: 100%;
-      padding: 14px;
-      background: #cc0000;
+    .panel-head svg { flex-shrink: 0; }
+    .panel-head-text h2 {
       color: #fff;
-      border: none;
-      border-radius: 8px;
       font-size: 16px;
       font-weight: 700;
       letter-spacing: 0.5px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+    }
+    .panel-head-text p {
+      color: rgba(255,255,255,0.7);
+      font-size: 12px;
+      margin-top: 2px;
     }
 
-    .btn-download:hover { background: #aa0000; }
+    .panel-body { padding: 26px 28px 24px; }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--red);
+      margin: 22px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #f0e0e0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 14px;
+      background: var(--red);
+      border-radius: 2px;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+
+    .field label {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .field input, .field select {
+      padding: 10px 13px;
+      border: 1.5px solid #e4e4e4;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--black);
+      background: #fafafa;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      width: 100%;
+    }
+    .field input:focus {
+      outline: none;
+      border-color: var(--red);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(192,0,12,0.08);
+    }
+
+    .inv-no-display {
+      background: var(--red-light);
+      border: 1.5px dashed var(--red);
+      border-radius: 8px;
+      padding: 10px 13px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--red);
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .inv-no-display span { font-size: 10px; color: var(--gray-500); font-weight: 400; }
+
+    /* ── SIGNATURE PAD ── */
+    .sig-section {
+      margin-top: 8px;
+    }
+    .sig-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--red);
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #f0e0e0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .sig-label::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 14px;
+      background: var(--red);
+      border-radius: 2px;
+    }
+    .sig-wrapper {
+      border: 1.5px solid #e4e4e4;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+      position: relative;
+    }
+    #sigCanvas {
+      display: block;
+      width: 100%;
+      height: 130px;
+      cursor: crosshair;
+      touch-action: none;
+    }
+    .sig-controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .btn-sig-clear {
+      padding: 8px 18px;
+      background: #f5f5f5;
+      color: var(--gray-700);
+      border: 1.5px solid #ddd;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-sig-clear:hover { background: #eee; }
+    .sig-hint {
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-left: auto;
+      align-self: center;
+      font-style: italic;
+    }
+
+    /* ── DOWNLOAD BUTTON ── */
+    .btn-download {
+      margin-top: 26px;
+      width: 100%;
+      padding: 16px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      font-family: 'DM Sans', sans-serif;
+      box-shadow: 0 4px 18px rgba(192,0,12,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn-download:hover {
+      background: var(--red-dark);
+      box-shadow: 0 6px 24px rgba(192,0,12,0.4);
+    }
     .btn-download:active { transform: scale(0.99); }
 
-    /* ─── INVOICE (hidden, used for PDF capture) ─── */
+    /* ── HIDDEN INVOICE ── */
     #invoice-wrapper {
       position: fixed;
       left: -9999px;
       top: 0;
+      pointer-events: none;
     }
 
-    /* Exact A4 at 96dpi = 794 × 1123px */
+    /* =============================================
+       INVOICE TEMPLATE — EXACT A4 794 × 1123px
+       ============================================= */
     .invoice-box {
       width: 794px;
-      height: 1123px;
-      background: #fff;
-      padding: 30px 35px 25px;
-      box-sizing: border-box;
+      min-height: 1123px;
+      background: #ffffff;
       font-family: Arial, sans-serif;
       position: relative;
       overflow: hidden;
-    }
-
-    /* ─── INVOICE HEADER ─── */
-    .inv-header { text-align: center; margin-bottom: 8px; }
-    .inv-header h1 { color: #cc0000; font-size: 34px; letter-spacing: 2px; margin-bottom: 2px; }
-    .inv-header h3 { font-weight: normal; font-size: 15px; text-decoration: underline; color: #333; }
-
-    .inv-contact {
-      font-size: 13px;
-      color: #444;
-      margin: 8px 0 10px;
-      line-height: 1.6;
-    }
-
-    .inv-title {
-      text-align: center;
-      font-weight: bold;
-      font-size: 17px;
-      letter-spacing: 3px;
-      margin: 10px 0;
-      border-top: 2px solid #000;
-      border-bottom: 2px solid #000;
-      padding: 5px 0;
-    }
-
-    /* ─── TOP BOX ─── */
-    .top-box {
       display: flex;
-      border: 1.5px solid #000;
+      flex-direction: column;
     }
 
-    .top-left, .top-right {
-      padding: 10px 14px;
+    /* Red top bar */
+    .inv-topbar {
+      background: var(--red);
+      width: 100%;
+      height: 10px;
+    }
+
+    .inv-inner {
+      padding: 28px 36px 28px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── INVOICE HEADER ── */
+    .inv-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 2.5px solid var(--red);
+    }
+    .inv-brand h1 {
+      font-family: Arial, sans-serif;
+      color: var(--red);
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      line-height: 1;
+    }
+    .inv-brand p {
+      font-size: 11px;
+      color: var(--gray-500);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .inv-header-right {
+      text-align: right;
+      font-size: 11.5px;
+      color: var(--gray-700);
+      line-height: 1.7;
+    }
+    .inv-header-right strong { color: var(--black); }
+
+    /* ── INVOICE TITLE BAR ── */
+    .inv-title-bar {
+      background: var(--red);
+      color: #fff;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      padding: 8px 0;
+      margin-bottom: 0;
+    }
+
+    /* ── INFO BOX ── */
+    .inv-info-row {
+      display: flex;
+      border: 1.5px solid #ccc;
+      border-top: none;
+      margin-bottom: 0;
+    }
+    .inv-info-left {
+      width: 55%;
+      padding: 12px 16px;
+      border-right: 1.5px solid #ccc;
       font-size: 13px;
       line-height: 1.8;
     }
+    .inv-info-left .to-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--red);
+      margin-bottom: 3px;
+    }
+    .inv-info-left .to-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 6px;
+    }
+    .inv-info-right {
+      width: 45%;
+      padding: 12px 16px;
+      font-size: 12.5px;
+      line-height: 2;
+    }
+    .inv-info-right table { width: 100%; }
+    .inv-info-right td:first-child {
+      color: var(--gray-500);
+      font-weight: 600;
+      width: 48%;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .inv-info-right td:last-child {
+      color: var(--black);
+      font-weight: 700;
+      font-size: 13px;
+    }
 
-    .top-left { width: 50%; border-right: 1.5px solid #000; }
-    .top-right { width: 50%; }
-
-    .top-left strong, .top-right strong { font-size: 13px; }
-
-    /* ─── MAIN TABLE ─── */
+    /* ── MAIN TABLE ── */
     .inv-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 0;
-      border-left: 1.5px solid #000;
-      border-right: 1.5px solid #000;
-      border-bottom: 1.5px solid #000;
-    }
-
-    .inv-table th {
-      background: #f0f0f0;
-      border: 1.5px solid #000;
-      padding: 9px 12px;
+      border: 1.5px solid #ccc;
+      border-top: none;
       font-size: 13px;
+    }
+    .inv-table thead tr {
+      background: #f7f7f7;
+    }
+    .inv-table th {
+      border: 1px solid #ccc;
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-700);
       text-align: center;
     }
+    .inv-table th:first-child { text-align: left; }
 
     .inv-table td {
-      border: 1.5px solid #000;
-      padding: 12px 14px;
-      font-size: 13px;
+      border: 1px solid #ccc;
+      padding: 14px 16px;
       vertical-align: top;
     }
 
-    .td-desc { line-height: 1.8; }
-    .td-details { text-align: center; line-height: 2.2; font-weight: 600; }
-    .td-amount { text-align: center; line-height: 2.2; font-weight: 600; }
+    .td-desc { line-height: 2; font-size: 13px; }
+    .td-desc .desc-title { font-weight: 700; color: var(--gray-700); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .td-desc .desc-val { color: var(--black); font-weight: 600; font-size: 13.5px; }
+    .td-desc .desc-row { margin-bottom: 4px; }
 
-    /* ─── TOTAL SECTION ─── */
-    .total-section {
-      display: flex;
-      border: 1.5px solid #000;
-      border-top: none;
+    .period-badge {
+      display: inline-block;
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      color: #856404;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 4px;
+      margin-top: 6px;
+      letter-spacing: 0.3px;
     }
 
-    .words-box {
-      width: 63%;
-      padding: 12px 14px;
-      border-right: 1.5px solid #000;
-      font-size: 13px;
-      font-style: italic;
-    }
-
-    .grand-total {
-      width: 37%;
+    .td-details {
       text-align: center;
-      padding: 12px 10px;
-      font-size: 20px;
-      font-weight: bold;
+      line-height: 2.6;
+      font-size: 13px;
+      color: var(--gray-700);
+    }
+    .td-amount {
+      text-align: right;
+      line-height: 2.6;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--black);
+      padding-right: 18px !important;
+    }
+    .amount-sub {
+      color: var(--gray-700);
+      font-weight: 600;
+    }
+    .amount-deduct {
+      color: #c0000c;
+    }
+
+    /* ── TOTAL SECTION ── */
+    .inv-total-row {
+      display: flex;
+      border: 1.5px solid #ccc;
+      border-top: 2.5px solid var(--red);
+    }
+    .words-box {
+      width: 62%;
+      padding: 14px 16px;
+      border-right: 1.5px solid #ccc;
+      font-size: 12px;
+    }
+    .words-box .words-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--red);
+      margin-bottom: 4px;
+    }
+    .words-box .words-text {
+      font-style: italic;
+      color: var(--black);
+      font-weight: 600;
+      font-size: 12.5px;
       line-height: 1.5;
     }
-
-    /* ─── DATE RANGE ROW ─── */
-    .date-row {
-      font-size: 13px;
-      margin: 8px 0 4px;
-      color: #333;
+    .grand-total-box {
+      width: 38%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 10px;
+      background: var(--red);
+    }
+    .grand-total-box .gt-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 4px;
+    }
+    .grand-total-box .gt-amount {
+      font-size: 26px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 1px;
     }
 
-    /* ─── SIGNATURE ─── */
-    .inv-signature {
-      text-align: right;
-      margin-top: 50px;
-      font-size: 13px;
-      font-weight: bold;
+    /* ── SIGNATURE AREA ── */
+    .inv-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: auto;
+      padding-top: 30px;
+      border-top: 1px solid #eee;
+    }
+    .inv-footer-note {
+      font-size: 11px;
+      color: var(--gray-500);
+      line-height: 1.7;
+      max-width: 55%;
+    }
+    .inv-footer-note strong { color: var(--red); }
+    .inv-sig-block {
+      text-align: center;
+      font-size: 12px;
+    }
+    .inv-sig-img {
+      height: 60px;
+      width: 180px;
+      display: block;
+      margin: 0 auto 4px;
+      object-fit: contain;
+    }
+    .inv-sig-img.empty-sig {
+      border-bottom: 1.5px solid #999;
+    }
+    .inv-sig-label {
+      font-weight: 700;
+      color: var(--black);
+      font-size: 12px;
+    }
+    .inv-sig-sublabel {
+      color: var(--gray-500);
+      font-size: 10.5px;
+      letter-spacing: 0.5px;
     }
 
-    /* ─── MOBILE RESPONSIVE ─── */
-    @media (max-width: 640px) {
-      body { padding: 12px; }
-      .panel { padding: 18px 14px; }
-      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
-      .panel-title { font-size: 18px; }
+    /* Red bottom bar */
+    .inv-bottombar {
+      background: var(--red);
+      height: 8px;
     }
 
-    @media (max-width: 420px) {
+    /* ── RESPONSIVE ── */
+    @media (max-width: 680px) {
+      .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
+      .panel-body { padding: 18px 16px; }
+    }
+    @media (max-width: 440px) {
       .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-<div class="panel">
-  <div class="panel-title">🚗 ASAD TRAVELS</div>
-  <div class="panel-sub">Invoice Generator — Fill the form and download PDF</div>
-
-  <div class="section-label">Client Details</div>
-  <div class="grid-3">
-    <div class="field"><label>To (Client)</label><input id="to" placeholder="e.g. ABC Company"></div>
-    <div class="field"><label>Invoice Date</label><input id="date" type="date"></div>
-    <div class="field"><label>Booked By</label><input id="bookedBy" placeholder="e.g. Rahul"></div>
-  </div>
-  <div class="grid-2">
-    <div class="field"><label>Project</label><input id="project" placeholder="Project name"></div>
-    <div class="field"><label>Email (optional)</label><input id="email" placeholder="e.g. asif@gmail.com"></div>
-  </div>
-
-  <div class="section-label">Vehicle Details</div>
-  <div class="grid-3">
-    <div class="field"><label>Hire Charges Of</label><input id="hire" placeholder="e.g. Mumbai–Pune"></div>
-    <div class="field"><label>Car Type</label><input id="carType" placeholder="e.g. Innova"></div>
-    <div class="field"><label>Car Number</label><input id="carNo" placeholder="e.g. MH01 AB 1234"></div>
-  </div>
-
-  <div class="section-label">Trip Charges</div>
-  <div class="grid-4">
-    <div class="field"><label>Total KM</label><input id="km" type="number" placeholder="e.g. 459" min="0"></div>
-    <div class="field"><label>Rate per KM (₹)</label><input id="rate" type="number" placeholder="e.g. 10" min="0"></div>
-    <div class="field"><label>Driver/Day (₹)</label><input id="driver" type="number" placeholder="e.g. 200" min="0"></div>
-    <div class="field"><label>No. of Days</label><input id="days" type="number" placeholder="e.g. 2" min="0"></div>
-  </div>
-  <div class="grid-3">
-    <div class="field"><label>Trip From Date</label><input id="fromDate" type="date"></div>
-    <div class="field"><label>Trip To Date</label><input id="toDate" type="date"></div>
-    <div class="field"><label>Toll Charges (₹)</label><input id="toll" type="number" placeholder="e.g. 250" min="0"></div>
-  </div>
-  <div class="grid-2">
-    <div class="field"><label>Advance Paid (₹)</label><input id="advance" type="number" placeholder="e.g. 300" min="0"></div>
-    <div class="field"><label>Mobile No</label><input id="mobile" placeholder="e.g. 9876543210"></div>
-  </div>
-
-  <button class="btn-download" onclick="generatePDF()">⬇ Download Invoice PDF</button>
+<div class="page-header">
+  <h1>ASAD TRAVELS</h1>
+  <p>PROFESSIONAL INVOICE GENERATOR</p>
 </div>
 
-<!-- Hidden invoice for PDF capture only -->
+<!-- ── FORM ── -->
+<div class="panel">
+  <div class="panel-head">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/></svg>
+    <div class="panel-head-text">
+      <h2>Create New Invoice</h2>
+      <p>Fill in the details below and download your professional PDF invoice</p>
+    </div>
+  </div>
+
+  <div class="panel-body">
+
+    <div class="section-label">Invoice Info</div>
+    <div class="grid-3">
+      <div class="field">
+        <label>Invoice Number</label>
+        <div class="inv-no-display" id="invNoDisplay">
+          <span id="invNoValue">INV001</span>
+          <span>Auto-generated</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Invoice Date</label>
+        <input id="date" type="date">
+      </div>
+      <div class="field">
+        <label>Mobile No</label>
+        <input id="mobile" placeholder="e.g. 9876543210">
+      </div>
+    </div>
+
+    <div class="section-label">Client Details</div>
+    <div class="grid-3">
+      <div class="field"><label>To (Client Name)</label><input id="to" placeholder="e.g. ABC Company"></div>
+      <div class="field"><label>Booked By</label><input id="bookedBy" placeholder="e.g. Rahul Sharma"></div>
+      <div class="field"><label>Email (optional)</label><input id="email" placeholder="e.g. asif@gmail.com"></div>
+    </div>
+    <div class="field" style="margin-top:14px">
+      <label>Project / Purpose</label>
+      <input id="project" placeholder="e.g. Site Visit — Andheri to Pune">
+    </div>
+
+    <div class="section-label">Vehicle Details</div>
+    <div class="grid-3">
+      <div class="field"><label>Hire Charges Of (Route)</label><input id="hire" placeholder="e.g. Mumbai – Pune"></div>
+      <div class="field"><label>Car Type</label><input id="carType" placeholder="e.g. Toyota Innova"></div>
+      <div class="field"><label>Car Number</label><input id="carNo" placeholder="e.g. MH01 AB 1234"></div>
+    </div>
+
+    <div class="section-label">Trip Charges</div>
+    <div class="grid-4">
+      <div class="field"><label>Total KM</label><input id="km" type="number" placeholder="e.g. 459" min="0"></div>
+      <div class="field"><label>Rate / KM (₹)</label><input id="rate" type="number" placeholder="e.g. 12" min="0"></div>
+      <div class="field"><label>Driver Charge / Day (₹)</label><input id="driver" type="number" placeholder="e.g. 250" min="0"></div>
+      <div class="field"><label>No. of Days</label><input id="days" type="number" placeholder="e.g. 2" min="0"></div>
+    </div>
+    <div class="grid-3" style="margin-top:14px">
+      <div class="field"><label>Trip From Date</label><input id="fromDate" type="date"></div>
+      <div class="field"><label>Trip To Date</label><input id="toDate" type="date"></div>
+      <div class="field"><label>Toll Charges (₹)</label><input id="toll" type="number" placeholder="e.g. 250" min="0"></div>
+    </div>
+    <div class="grid-2" style="margin-top:14px">
+      <div class="field"><label>Advance Paid (₹)</label><input id="advance" type="number" placeholder="e.g. 500" min="0"></div>
+      <div class="field"><label>Additional Notes (optional)</label><input id="notes" placeholder="e.g. Night halt included"></div>
+    </div>
+
+    <!-- SIGNATURE PAD -->
+    <div class="sig-section">
+      <div class="sig-label" style="margin-top:22px;">Digital Signature (Authorised)</div>
+      <div class="sig-wrapper">
+        <canvas id="sigCanvas"></canvas>
+      </div>
+      <div class="sig-controls">
+        <button class="btn-sig-clear" onclick="clearSignature()">✕ Clear Signature</button>
+        <span class="sig-hint">Draw your signature above with mouse or finger</span>
+      </div>
+    </div>
+
+    <button class="btn-download" onclick="generatePDF()">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      DOWNLOAD INVOICE PDF
+    </button>
+
+  </div>
+</div>
+
+<!-- ── HIDDEN INVOICE ── -->
 <div id="invoice-wrapper">
   <div class="invoice-box" id="invoice">
 
-    <div class="inv-header">
-      <h1>ASAD TRAVELS</h1>
-      <h3>CAR RENTAL SOLUTION</h3>
-    </div>
+    <div class="inv-topbar"></div>
 
-    <div class="inv-contact">
-      Email: <span id="t_email"></span> &nbsp;|&nbsp; Mob: <span id="t_mobile"></span>
-    </div>
+    <div class="inv-inner">
 
-    <div class="inv-title">INVOICE</div>
-
-    <div class="top-box">
-      <div class="top-left">
-        <strong>TO:</strong> <span id="t_to"></span>
+      <!-- Header -->
+      <div class="inv-header-row">
+        <div class="inv-brand">
+          <h1>ASAD TRAVELS</h1>
+          <p>Car Rental Solution</p>
+        </div>
+        <div class="inv-header-right">
+          <strong>Email:</strong> <span id="t_email"></span><br>
+          <strong>Mobile:</strong> <span id="t_mobile"></span>
+        </div>
       </div>
-      <div class="top-right">
-        <strong>Invoice No:</strong> <span id="t_invoice"></span><br>
-        <strong>Date:</strong> <span id="t_date"></span><br>
-        <strong>Booked By:</strong> <span id="t_bookedBy"></span><br>
-        <strong>Project:</strong> <span id="t_project"></span>
-      </div>
-    </div>
 
-    <table class="inv-table">
-      <thead>
-        <tr>
-          <th style="width:38%">Description</th>
-          <th style="width:37%">Details</th>
-          <th style="width:25%">Amount (₹)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="td-desc">
-            <strong>Hire Charges Of:</strong> <span id="t_hire"></span><br>
-            <strong>Car Type:</strong> <span id="t_carType"></span><br>
-            <strong>Car No:</strong> <span id="t_carNo"></span><br>
-            <span id="t_dateRange" class="date-row"></span>
-          </td>
-          <td class="td-details">
-            <span id="t_kmLine"></span><br>
-            <span id="t_driverLine"></span><br>
-            Toll Charges<br>
-            Less: Advance
-          </td>
-          <td class="td-amount">
-            <span id="t_kmAmount"></span><br>
-            <span id="t_driverAmount"></span><br>
-            <span id="t_toll"></span><br>
-            - <span id="t_advance"></span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+      <!-- Invoice Title -->
+      <div class="inv-title-bar">TAX INVOICE</div>
 
-    <div class="total-section">
-      <div class="words-box">
-        <strong>Amount in Words:</strong><br>
-        <span id="t_words"></span>
+      <!-- Info Row -->
+      <div class="inv-info-row">
+        <div class="inv-info-left">
+          <div class="to-label">Bill To</div>
+          <div class="to-name" id="t_to"></div>
+          <div style="font-size:12px; color:#555; margin-top:2px;">
+            <span id="t_project_info"></span>
+          </div>
+        </div>
+        <div class="inv-info-right">
+          <table>
+            <tr><td>Invoice No</td><td id="t_invoice"></td></tr>
+            <tr><td>Date</td><td id="t_date"></td></tr>
+            <tr><td>Booked By</td><td id="t_bookedBy"></td></tr>
+          </table>
+        </div>
       </div>
-      <div class="grand-total">
-        GRAND TOTAL<br>
-        ₹ <span id="t_total"></span>
-      </div>
-    </div>
 
-    <div class="inv-signature">
-      FOR ASAD TRAVELS<br><br><br>
-      ___________________<br>
-      Authorised Signature
-    </div>
+      <!-- Main Table -->
+      <table class="inv-table">
+        <thead>
+          <tr>
+            <th style="width:40%; text-align:left;">Description</th>
+            <th style="width:35%;">Details</th>
+            <th style="width:25%;">Amount (₹)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-desc">
+              <div class="desc-row"><span class="desc-title">Route: </span><span class="desc-val" id="t_hire"></span></div>
+              <div class="desc-row"><span class="desc-title">Car Type: </span><span class="desc-val" id="t_carType"></span></div>
+              <div class="desc-row"><span class="desc-title">Car No: </span><span class="desc-val" id="t_carNo"></span></div>
+              <div id="t_dateRange_wrap"><span class="period-badge" id="t_dateRange"></span></div>
+              <div id="t_notes_wrap" style="margin-top:8px; font-size:12px; color:#666; font-style:italic;"><span id="t_notes"></span></div>
+            </td>
+            <td class="td-details">
+              <span id="t_kmLine"></span><br>
+              <span id="t_driverLine"></span><br>
+              Toll / Road Tax<br>
+              Less: Advance Paid
+            </td>
+            <td class="td-amount">
+              <span id="t_kmAmount" class="amount-sub"></span><br>
+              <span id="t_driverAmount" class="amount-sub"></span><br>
+              <span id="t_toll" class="amount-sub"></span><br>
+              <span id="t_advance" class="amount-deduct"></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Total Row -->
+      <div class="inv-total-row">
+        <div class="words-box">
+          <div class="words-label">Amount in Words</div>
+          <div class="words-text" id="t_words"></div>
+        </div>
+        <div class="grand-total-box">
+          <div class="gt-label">Grand Total</div>
+          <div class="gt-amount">₹ <span id="t_total"></span></div>
+        </div>
+      </div>
+
+      <!-- Footer / Signature -->
+      <div class="inv-footer">
+        <div class="inv-footer-note">
+          <strong>Thank you for choosing Asad Travels!</strong><br>
+          This is a computer-generated invoice.<br>
+          For queries, contact us on the details above.
+        </div>
+        <div class="inv-sig-block">
+          <img id="t_sig" class="inv-sig-img empty-sig" src="" alt="signature" style="display:none;">
+          <div id="t_sig_blank" class="inv-sig-img empty-sig"></div>
+          <div class="inv-sig-label">FOR ASAD TRAVELS</div>
+          <div class="inv-sig-sublabel">Authorised Signature</div>
+        </div>
+      </div>
+
+    </div><!-- /inv-inner -->
+
+    <div class="inv-bottombar"></div>
 
   </div>
 </div>
 
 <script>
-  // Set today's date by default
+  // ── INVOICE NUMBER (auto-increment via localStorage) ──
+  function getNextInvoiceNo() {
+    let counter = parseInt(localStorage.getItem('asad_inv_counter') || '0', 10);
+    counter += 1;
+    localStorage.setItem('asad_inv_counter', counter);
+    return 'INV' + String(counter).padStart(3, '0');
+  }
+
+  // Preview the NEXT invoice number on load (without incrementing)
+  function peekInvoiceNo() {
+    let counter = parseInt(localStorage.getItem('asad_inv_counter') || '0', 10);
+    return 'INV' + String(counter + 1).padStart(3, '0');
+  }
+
+  document.getElementById('invNoValue').textContent = peekInvoiceNo();
+
+  // Set today's date
   document.getElementById('date').valueAsDate = new Date();
 
-  // Number to words – Indian style with proper spacing
+  // ── SIGNATURE PAD ──
+  const canvas = document.getElementById('sigCanvas');
+  const ctx = canvas.getContext('2d');
+  let isDrawing = false;
+  let lastX = 0, lastY = 0;
+  let hasSig = false;
+
+  function resizeCanvas() {
+    const w = canvas.parentElement.offsetWidth;
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = w * ratio;
+    canvas.height = 130 * ratio;
+    canvas.style.width = w + 'px';
+    canvas.style.height = '130px';
+    ctx.scale(ratio, ratio);
+    ctx.strokeStyle = '#111';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function getPos(e, el) {
+    const r = el.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return [(src.clientX - r.left), (src.clientY - r.top)];
+  }
+
+  canvas.addEventListener('mousedown', e => {
+    isDrawing = true;
+    [lastX, lastY] = getPos(e, canvas);
+  });
+  canvas.addEventListener('mousemove', e => {
+    if (!isDrawing) return;
+    const [x, y] = getPos(e, canvas);
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    [lastX, lastY] = [x, y];
+    hasSig = true;
+  });
+  canvas.addEventListener('mouseup', () => isDrawing = false);
+  canvas.addEventListener('mouseleave', () => isDrawing = false);
+
+  canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    isDrawing = true;
+    [lastX, lastY] = getPos(e, canvas);
+  }, { passive: false });
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!isDrawing) return;
+    const [x, y] = getPos(e, canvas);
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    [lastX, lastY] = [x, y];
+    hasSig = true;
+  }, { passive: false });
+  canvas.addEventListener('touchend', () => isDrawing = false);
+
+  function clearSignature() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hasSig = false;
+  }
+
+  // ── HELPERS ──
   function numberToWords(num) {
     if (num === 0) return "Zero Rupees Only";
-
     const a = ["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten",
       "Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
     const b = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
@@ -388,7 +861,6 @@
       if (n < 10000000) return inWords(Math.floor(n/100000)) + " Lakh" + (n%100000 ? " " + inWords(n%100000) : "");
       return inWords(Math.floor(n/10000000)) + " Crore" + (n%10000000 ? " " + inWords(n%10000000) : "");
     }
-
     return inWords(num).trim() + " Rupees Only";
   }
 
@@ -398,17 +870,22 @@
     return d + "/" + m + "/" + y;
   }
 
+  function fmt(n) {
+    return n.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  // ── GENERATE PDF ──
   function generatePDF() {
-    // Read values
-    const toVal      = document.getElementById('to').value.trim()        || "—";
+    const invoiceNo  = getNextInvoiceNo();
+    const toVal      = document.getElementById('to').value.trim()         || "—";
     const dateVal    = document.getElementById('date').value;
-    const bookedBy   = document.getElementById('bookedBy').value.trim()  || "—";
-    const project    = document.getElementById('project').value.trim()   || "—";
-    const emailVal   = document.getElementById('email').value.trim()     || "asif@gmail.com";
-    const mobileVal  = document.getElementById('mobile').value.trim()    || "______";
-    const hireVal    = document.getElementById('hire').value.trim()      || "—";
-    const carType    = document.getElementById('carType').value.trim()   || "—";
-    const carNo      = document.getElementById('carNo').value.trim()     || "—";
+    const bookedBy   = document.getElementById('bookedBy').value.trim()   || "—";
+    const project    = document.getElementById('project').value.trim()    || "";
+    const emailVal   = document.getElementById('email').value.trim()      || "asif@gmail.com";
+    const mobileVal  = document.getElementById('mobile').value.trim()     || "______";
+    const hireVal    = document.getElementById('hire').value.trim()       || "—";
+    const carType    = document.getElementById('carType').value.trim()    || "—";
+    const carNo      = document.getElementById('carNo').value.trim()      || "—";
     const kmVal      = parseFloat(document.getElementById('km').value)    || 0;
     const rateVal    = parseFloat(document.getElementById('rate').value)  || 0;
     const driverVal  = parseFloat(document.getElementById('driver').value)|| 0;
@@ -417,66 +894,84 @@
     const toDateVal  = document.getElementById('toDate').value;
     const tollVal    = parseFloat(document.getElementById('toll').value)  || 0;
     const advVal     = parseFloat(document.getElementById('advance').value)|| 0;
+    const notesVal   = document.getElementById('notes').value.trim()      || "";
 
-    // Calculations
     const kmAmount     = kmVal * rateVal;
     const driverAmount = driverVal * daysVal;
     const total        = kmAmount + driverAmount + tollVal - advVal;
 
-    // Invoice number
-    const invoiceNo = "INV" + new Date().getTime();
-
-    // Fill invoice
+    // Fill invoice fields
     document.getElementById('t_email').innerText     = emailVal;
     document.getElementById('t_mobile').innerText    = mobileVal;
     document.getElementById('t_invoice').innerText   = invoiceNo;
     document.getElementById('t_date').innerText      = formatDate(dateVal);
     document.getElementById('t_to').innerText        = toVal;
     document.getElementById('t_bookedBy').innerText  = bookedBy;
-    document.getElementById('t_project').innerText   = project;
+    document.getElementById('t_project_info').innerText = project ? "Project: " + project : "";
     document.getElementById('t_hire').innerText      = hireVal;
     document.getElementById('t_carType').innerText   = carType;
     document.getElementById('t_carNo').innerText     = carNo;
 
-    // Date range
     if (fromDate || toDateVal) {
-      document.getElementById('t_dateRange').innerText =
-        "Period: " + formatDate(fromDate) + " to " + formatDate(toDateVal);
+      const from = fromDate ? formatDate(fromDate) : "?";
+      const to   = toDateVal ? formatDate(toDateVal) : "?";
+      document.getElementById('t_dateRange').innerText = "Period: " + from + "  →  " + to;
+      document.getElementById('t_dateRange_wrap').style.display = '';
     } else {
-      document.getElementById('t_dateRange').innerText = "";
+      document.getElementById('t_dateRange_wrap').style.display = 'none';
     }
 
-    // Details column – actual numbers
+    if (notesVal) {
+      document.getElementById('t_notes').innerText = "Note: " + notesVal;
+      document.getElementById('t_notes_wrap').style.display = '';
+    } else {
+      document.getElementById('t_notes_wrap').style.display = 'none';
+    }
+
     document.getElementById('t_kmLine').innerText     = kmVal + " KM × ₹" + rateVal + "/KM";
     document.getElementById('t_driverLine').innerText = "₹" + driverVal + "/Day × " + daysVal + " Days";
 
-    // Amount column
-    document.getElementById('t_kmAmount').innerText     = kmAmount.toFixed(0);
-    document.getElementById('t_driverAmount').innerText = driverAmount.toFixed(0);
-    document.getElementById('t_toll').innerText         = tollVal.toFixed(0);
-    document.getElementById('t_advance').innerText      = advVal.toFixed(0);
-    document.getElementById('t_total').innerText        = total.toFixed(0);
+    document.getElementById('t_kmAmount').innerText     = fmt(kmAmount);
+    document.getElementById('t_driverAmount').innerText = fmt(driverAmount);
+    document.getElementById('t_toll').innerText         = fmt(tollVal);
+    document.getElementById('t_advance').innerText      = "− " + fmt(advVal);
+    document.getElementById('t_total').innerText        = fmt(total);
     document.getElementById('t_words').innerText        = numberToWords(Math.round(total));
 
-    // Capture ONLY the invoice-box (no blank space)
+    // Signature
+    const sigImg   = document.getElementById('t_sig');
+    const sigBlank = document.getElementById('t_sig_blank');
+    if (hasSig) {
+      sigImg.src = canvas.toDataURL('image/png');
+      sigImg.style.display = 'block';
+      sigBlank.style.display = 'none';
+    } else {
+      sigImg.style.display = 'none';
+      sigBlank.style.display = 'block';
+    }
+
+    // Update preview display
+    document.getElementById('invNoValue').textContent = peekInvoiceNo();
+
+    // Capture
     const invoiceEl = document.getElementById('invoice');
 
     html2canvas(invoiceEl, {
       scale: 3,
       useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
       width: 794,
       height: 1123,
-      windowWidth: 794,
-      windowHeight: 1123,
+      windowWidth: 1200,
       scrollX: 0,
       scrollY: 0,
     }).then(canvas => {
       const img = canvas.toDataURL("image/png");
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-      // A4 = 210 × 297 mm — fill exactly, no margins
       pdf.addImage(img, "PNG", 0, 0, 210, 297);
-      pdf.save("Asad_Travels_Invoice_" + invoiceNo + ".pdf");
+      pdf.save("AsadTravels_" + invoiceNo + ".pdf");
     });
   }
 </script>
